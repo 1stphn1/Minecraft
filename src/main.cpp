@@ -438,6 +438,7 @@ int main(int argc, char *argv[])
 
         renderer.Flush();
 
+        // Updated version
         KeyboardInput(window);
         player.GravityAcc();
         player.updateView();
