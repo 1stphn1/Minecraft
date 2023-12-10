@@ -89,7 +89,7 @@ public:
 
     constexpr BlockType GetBlockType(int x, int y, int z) const
     {
-        #ifdef GLA_DEBUG_MODE
+        #ifdef GLA_DEBUG
             if (x >= CHUNK_LENGHT || y >= CHUNK_HEIGHT || z >= CHUNK_LENGHT || x < 0 || y < 0 || z < 0) {
                 throw std::logic_error("coordinates out of bounds (X: " + std::to_string(x) + " - Y: " + std::to_string(y) + " - Z: " + std::to_string(z) + ") in Chunk::GetBlockType");
             }

@@ -16,6 +16,8 @@
 
 using namespace std::chrono_literals;
 
+constexpr float FPS_UPDATE_TIME = 0.7f;
+
 GLenum draw_mode = GL_TRIANGLES;
 
 struct Point {
@@ -31,12 +33,12 @@ void KeyboardInput(GLFWwindow* window)
     glfwPollEvents();
     
     if (glfwGetKey(window, GLFW_KEY_W)) {
-        // player.UpdateX(-glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        player.x_pos -= glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        player.UpdateX(-glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        // player.x_pos -= glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos -= glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     } else if (glfwGetKey(window, GLFW_KEY_S)) {
-        // player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        // player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos += glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
 
@@ -153,9 +155,7 @@ static void glfwError(int id, const char* description)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Works!\n";
-
-    #ifdef GLA_DEBUG_MODE
+    #ifdef GLA_DEBUG
         std::cout << "\n~In debug mode~\n";
     #endif
 
@@ -438,7 +438,6 @@ int main(int argc, char *argv[])
 
         renderer.Flush();
 
-        // Updated version
         KeyboardInput(window);
         player.GravityAcc();
         player.updateView();
@@ -447,14 +446,14 @@ int main(int argc, char *argv[])
             std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
         }
         
-        if (out_of_loop_timer.GetTime() >= 0.7f) {
+        if (out_of_loop_timer.GetTime() >= FPS_UPDATE_TIME) {
             // C++ std::string code
 
             std::string new_title = "Minecraft - "
             + std::to_string(1 / Gla::Timer::DeltaTime()/*time from last frame*/) + " FPS \\ " + std::to_string(Gla::Timer::DeltaTime()) + " ms \\ "
             + " --- X/Y/Z: " + std::to_string(player.x_pos) + " / " + std::to_string(player.y_pos) + " / " + std::to_string(player.z_pos);
 
-            #ifdef GLA_DEBUG_MODE
+            #ifdef GLA_DEBUG
                 new_title += " ~Debug Mode~";
             #endif
 
@@ -468,7 +467,7 @@ int main(int argc, char *argv[])
             snprintf(title, 255, "Minecraft - %f FPS  %s",
                 1 / Gla::Timer::DeltaTime(), // Last frame time - shows FPS from the previous frame
 
-                #ifdef GLA_DEBUG_MODE 
+                #ifdef GLA_DEBUG 
                     "~Debug Mode~\0"
                 #else
                     "\0"

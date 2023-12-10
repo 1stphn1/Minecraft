@@ -1,6 +1,6 @@
 PROJ_DIR = "C:/Users/matij/OneDrive/Desktop/Minecraft 10.10.2023"
 ARCHITECTURE = -m64
-OPTIMIZATION = -Og
+OPTIMIZATION = -Ofast
 STANDARD = c++23
 
 # Use -mwindows to disable cosnole window
@@ -52,7 +52,7 @@ stb:
 	g++ -c -o obj/stb_image.o 			src/stb/stb_image.cpp
 
 compile:
-	g++ -g -Wall -std=$(STANDARD) $(ARCHITECTURE) $(OPTIMIZATION) -o Minecraft \
+	g++ -Wall -std=$(STANDARD) $(ARCHITECTURE) $(OPTIMIZATION) -o Minecraft \
 	obj/VertexBufferLayout.o obj/IndexBuffer.o obj/VertexBuffer.o obj/UniformBuffer.o obj/VertexArray.o obj/GlaBase.o \
 	obj/Shader.o obj/Renderer.o obj/Texture.o obj/Noise.o obj/Chunk.o obj/Player.o obj/main.o obj/stb_image.o \
 	-lglfw3 -lopengl32 -lGdi32 -lglu32 -lglew32

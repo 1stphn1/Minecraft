@@ -4,11 +4,11 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#define GLA_DEBUG_MODE
+#define GLA_DEBUG
 
 #define GLAssert(expression)    if (!expression) { std::exit(EXIT_FAILURE); }
 
-#ifdef GLA_DEBUG_MODE
+#ifdef GLA_DEBUG
     #define LOG(output)  std::cout << output << '\n';
 
     #define GLCall(expression)  GLClearError();\
@@ -17,7 +17,7 @@
 #else
     #define LOG(output)         { }
     #define GLCall(expression)  expression
-#endif  // GLA_DEBUG_MODE
+#endif  // GLA_DEBUG
 
 const char* GLErrorToString(GLenum error);
 void        GLClearError();

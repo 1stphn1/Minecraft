@@ -184,7 +184,7 @@ void Chunk::BreakBlock(Player& player)
     // LOG("Y: " << y);
     
     if (x < 0 || y < 0 || z < 0 || x >= CHUNK_LENGHT || y >= CHUNK_HEIGHT || z >= CHUNK_LENGHT) {
-        #ifdef GLA_DEBUG_MODE
+        #ifdef GLA_DEBUG
             LOG("coordinates out of bounds ( range [0..16) ) in Chunk::BreakBlock");
         #endif
 

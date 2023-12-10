@@ -42,17 +42,26 @@ void Player::GravityAcc()
 
 void Player::Jump()
 {
+    if (m_ShouldFall) {
+        return;
+    }
+
     m_YSpeed += 5.0f;
     m_ShouldFall = true;
 }
 
 void Player::UpdateX(float value_to_add)
 {
+    if ((int)(x_pos) % CHUNK_LENGHT - 1 < 0 || (int)(x_pos) % CHUNK_LENGHT + 1 >= CHUNK_LENGHT) {
+        x_pos += value_to_add;
+        return;
+    }
+
     if (value_to_add < 0.0f)
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(
-           (int)(GetX()) % CHUNK_LENGHT - 1, (int)(GetY()), (int)(GetZ()) % CHUNK_LENGHT )
-           && x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(GetX()) % CHUNK_LENGHT - 1) + 0.5f ) >= 0.07f)
+           (int)(x_pos) % CHUNK_LENGHT - 1, (int)(y_pos - PLAYER_HEIGHT + 0.7f), (int)(z_pos) % CHUNK_LENGHT ) == NO_BLOCK
+           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.07f)
         {
             x_pos += value_to_add;
         }
@@ -60,8 +69,8 @@ void Player::UpdateX(float value_to_add)
     else
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(
-           (int)(GetX()) % CHUNK_LENGHT - 1, (int)(GetY()), (int)(GetZ()) % CHUNK_LENGHT )
-           && x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(GetX()) % CHUNK_LENGHT + 1) - 0.5f ) >= 0.07f)
+           (int)(x_pos) % CHUNK_LENGHT + 1, (int)(y_pos/* - PLAYER_HEIGHT + 0.7f*/), (int)(z_pos) % CHUNK_LENGHT ) == NO_BLOCK
+           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.07f)
         {
             x_pos += value_to_add;
         }

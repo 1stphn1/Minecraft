@@ -1,2 +1,5 @@
-/Minecraft.exe
-/MinecraftDebug.exe
+bin32/
+imgui/
+src/vertices.cpp
+Minecraft.exe
+MinecraftDebug.exe

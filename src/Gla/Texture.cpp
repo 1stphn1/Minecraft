@@ -85,11 +85,11 @@ namespace Gla
         stbi_set_flip_vertically_on_load(1);  // Flips because opengl loads images from bottom left
         m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
 
-        #ifdef GLA_DEBUG_MODE
+        #ifdef GLA_DEBUG
             if (!m_LocalBuffer) {
                 LOG("Failed to make texture, path: " << path);
             }
-        #endif // GLA_DEBUG_MODE
+        #endif // GLA_DEBUG
 
         GLCall( glGenTextures(1, &m_RendererID) );
         GLCall( glBindTexture(GL_TEXTURE_2D, m_RendererID) );
