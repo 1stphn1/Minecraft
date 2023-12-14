@@ -52,17 +52,19 @@ void Player::Jump()
 
 void Player::UpdateX(float value_to_add)
 {
-    int x = (int)(player.GetX() + 0.5f) - player.ChunkX() * CHUNK_LENGHT;
+    int x = (int)(player.GetX() + 0.5f) % CHUNK_LENGHT;
     int y = (int)(y_pos + 0.5f);
-    int z = (int)(player.GetZ() + 0.5f) - player.ChunkZ() * CHUNK_LENGHT;
+    int z = (int)(player.GetZ() + 0.5f) % CHUNK_LENGHT;
 
     if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT) {
+        LOG("Goes through X!");
         x_pos += value_to_add;
         return;
     }
 
-    if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT) {
-        LOG("z is out of bounds in Player::UpdateX()");
+    if (z < 0 || z >= CHUNK_LENGHT) {
+        LOG("z == " << z << " in Player::UpdateX()");
+
         x_pos += value_to_add;
         return;
         // throw std::logic_error("z is out of bounds in Player::UpdateX()");
@@ -71,7 +73,7 @@ void Player::UpdateX(float value_to_add)
     if (value_to_add < 0.0f)
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x - 1, y - 1, z) == NO_BLOCK
-           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.07f)
+           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.099f)
         {
             x_pos += value_to_add;
         }
@@ -79,14 +81,47 @@ void Player::UpdateX(float value_to_add)
     else
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x + 1, y - 1, z) == NO_BLOCK
-           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.07f)
+           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.099f)
         {
             x_pos += value_to_add;
         }
     }
 }
 
-void Player::UpdateY(float value_to_add)
+void Player::UpdateZ(float value_to_add)
 {
+    int x = (int)(player.GetX() + 0.5f) % CHUNK_LENGHT;
+    int y = (int)(y_pos + 0.5f);
+    int z = (int)(player.GetZ() + 0.5f) % CHUNK_LENGHT;
 
+    if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT) {
+        LOG("Goes through Z!");
+        z_pos += value_to_add;
+        return;
+    }
+
+    if (x < 0 || x >= CHUNK_LENGHT) {
+        LOG("x == " << x << " in Player::UpdateZ()");
+
+        x_pos += value_to_add;
+        return;
+        // throw std::logic_error("z is out of bounds in Player::UpdateX()");
+    }
+
+    if (value_to_add < 0.0f)
+    {
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK
+           || std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + (int)(z_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.099f)
+        {
+            z_pos += value_to_add;
+        }
+    }
+    else
+    {
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK
+           || std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + (int)(z_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.099f)
+        {
+            z_pos += value_to_add;
+        }
+    }
 }

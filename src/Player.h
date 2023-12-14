@@ -45,7 +45,7 @@ public:
     void GravityAcc();
     void Jump();
     void UpdateX(float value_to_add);
-    void UpdateY(float value_to_add);
+    void UpdateZ(float value_to_add);
     void Update();  // Runs every frame
 
     float x_pos;

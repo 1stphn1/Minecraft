@@ -34,11 +34,12 @@ void KeyboardInput(GLFWwindow* window)
     
     if (glfwGetKey(window, GLFW_KEY_W)) {
         player.UpdateX(-glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        player.UpdateZ(-glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
         // player.x_pos -= glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-        player.z_pos -= glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        // player.z_pos -= glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     } else if (glfwGetKey(window, GLFW_KEY_S)) {
-        player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        // player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        // player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos += glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
 

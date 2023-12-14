@@ -1,6 +1,6 @@
 PROJ_DIR = "C:/Users/matij/OneDrive/Desktop/Minecraft 10.10.2023"
 ARCHITECTURE = -m64
-OPTIMIZATION = -Ofast
+OPTIMIZATION = -O0
 STANDARD = c++23
 
 # Use -mwindows to disable cosnole window
