@@ -52,7 +52,7 @@ void Player::Jump()
 
 void Player::UpdateX(float value_to_add)
 {
-    if ((int)(x_pos) % CHUNK_LENGHT - 1 < 0 || (int)(x_pos) % CHUNK_LENGHT + 1 >= CHUNK_LENGHT) {
+    if ((int)(x_pos + 0.5f) % CHUNK_LENGHT - 1 < 0 || (int)(x_pos + 0.5f) % CHUNK_LENGHT + 1 >= CHUNK_LENGHT) {
         x_pos += value_to_add;
         return;
     }
@@ -60,8 +60,8 @@ void Player::UpdateX(float value_to_add)
     if (value_to_add < 0.0f)
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(
-           (int)(x_pos) % CHUNK_LENGHT - 1, (int)(y_pos - PLAYER_HEIGHT + 0.7f), (int)(z_pos) % CHUNK_LENGHT ) == NO_BLOCK
-           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.07f)
+           (int)(x_pos + 0.5f) % CHUNK_LENGHT - 1, (int)(y_pos - 1.0f), (int)(z_pos) % CHUNK_LENGHT ) == NO_BLOCK
+           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.07f)
         {
             x_pos += value_to_add;
         }
@@ -69,7 +69,7 @@ void Player::UpdateX(float value_to_add)
     else
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(
-           (int)(x_pos) % CHUNK_LENGHT + 1, (int)(y_pos/* - PLAYER_HEIGHT + 0.7f*/), (int)(z_pos) % CHUNK_LENGHT ) == NO_BLOCK
+           (int)(x_pos + 0.5f) % CHUNK_LENGHT + 1, (int)(y_pos - 1.0f), (int)(z_pos + 0.5f) % CHUNK_LENGHT ) == NO_BLOCK
            || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.07f)
         {
             x_pos += value_to_add;

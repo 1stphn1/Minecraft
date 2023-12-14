@@ -91,7 +91,7 @@ void KeyboardInput(GLFWwindow* window)
 
         if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
         {
-            player.changeSpeed();
+            player.ChangeSpeed();
             time_after_pushing.Reset();
         }
     }
@@ -440,7 +440,7 @@ int main(int argc, char *argv[])
 
         KeyboardInput(window);
         player.GravityAcc();
-        player.updateView();
+        player.UpdateView();
 
         if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time) {  // Frame limit 60 fps
             std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));

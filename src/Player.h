@@ -22,14 +22,14 @@ public:
         m_UniformBuffer = &u_buffer;
     }
 
-    inline void updateView()
+    inline void UpdateView()
     {
         m_ViewMtr = glm::rotate(glm::mat4(1.0f), glm::radians(y_angle), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(xz_angle), y_axis)
         * glm::translate(glm::mat4(1.0f), glm::vec3(-x_pos, -y_pos, -z_pos));
         m_UniformBuffer->UpdateData((void*)&(PROJECTION_MTR * m_ViewMtr)[0][0]);
     }
 
-    inline void changeSpeed()
+    inline void ChangeSpeed()
     {
         static unsigned int multiplier = 1;
 
