@@ -141,18 +141,18 @@ void Chunk::BreakBlock(Player& player)
 
     for (float ray = 0.0f; ray <= 8.0f; ray += 0.05f)  // Shooting a ray from camera to check whether there's a block
     {
-        // x = (int)(ray * player_xz_sin) + (int)(player.GetX() + 0.5f) - player.ChunkX() * CHUNK_LENGHT;
-        // z = (int)(ray * player_xz_cos) + (int)(player.GetZ() + 0.5f) - player.ChunkZ() * CHUNK_LENGHT;
+        x = (int)(ray * player_xz_sin) + (int)(player.GetX() ) - player.ChunkX() * CHUNK_LENGHT;
+        z = (int)(ray * player_xz_cos) + (int)(player.GetZ() ) - player.ChunkZ() * CHUNK_LENGHT;
 
-        // float h = player_y_sin * ray / player_y_cos;
-        // y = (int)(player_y_sin * h) + (int)(player.GetY() + 0.5f);
+        float h = player_y_sin * ray / player_y_cos;
+        y = (int)(player_y_sin * h) + (int)(player.GetY() );
 
         // int k = (int)(std::cos(player.GetYangle()) * ray);
-        y = (int)(std::sin(-player.GetYangle()) * ray + player.GetY() + 0.5f);
-        x = (int)(std::sin(player.GetXZangle()) * ray + ((int)(player.GetX() + 0.5f) % CHUNK_LENGHT));
-        z = (int)(std::cos(player.GetXZangle()) * ray + ((int)(player.GetZ() + 0.5f) % CHUNK_LENGHT));
+        // y = (int)(std::sin(-player.GetYangle()) * ray + player.GetY() );
+        // x = (int)(std::sin(player.GetXZangle()) * k + ((int)(player.GetX() ) % CHUNK_LENGHT));
+        // z = (int)(std::cos(player.GetXZangle()) * k + ((int)(player.GetZ() ) % CHUNK_LENGHT));
 
-        // y = (int)(glm::tan(player.GetYangle()) * ray) + (int)(player.GetY() + 0.5f);
+        // y = (int)(glm::tan(player.GetYangle()) * ray) + (int)(player.GetY() );
 
         // Checks if a block from a surrounding chunk should be destroyed (that is, if selected block is from a surrounding chunk)
         chunk_x_index = m_xCoord;

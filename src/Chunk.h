@@ -152,52 +152,52 @@ private:
 constexpr float cube_vertices[] = {
     //   cube coords    texture coords   face //
     /*front face*/
-    -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   0.0f,  // bottom-left  0
-     0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   0.0f,  // bottom-right 1
-     0.5f,  0.5f,  0.5f,   1.0f, 1.0f,   0.0f,  // top-right    2
-     0.5f,  0.5f,  0.5f,   1.0f, 1.0f,   0.0f,  // top-right    2
-    -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,   0.0f,  // top-left     3
-    -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   0.0f,  // bottom-left  0
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   0.0f,  // bottom-left  0
+    1.0f, 0.0f, 1.0f,   1.0f, 0.0f,   0.0f,  // bottom-right 1
+    1.0f, 1.0f, 1.0f,   1.0f, 1.0f,   0.0f,  // top-right    2
+    1.0f, 1.0f, 1.0f,   1.0f, 1.0f,   0.0f,  // top-right    2
+    0.0f, 1.0f, 1.0f,   0.0f, 1.0f,   0.0f,  // top-left     3
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   0.0f,  // bottom-left  0
 
     /*back face*/
-     0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   1.0f,  // top-right    6
-    -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   1.0f,  // top-left     7
-    -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,   1.0f,  // bottom-left  4
-    -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,   1.0f,  // bottom-left  4
-     0.5f, -0.5f, -0.5f,   1.0f, 0.0f,   1.0f,  // bottom-right 5
-     0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   1.0f,  // top-right    6
+    1.0f, 1.0f, 0.0f,   1.0f, 1.0f,   1.0f,  // top-right    6
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   1.0f,  // top-left     7
+    0.0f, 0.0f, 0.0f,   0.0f, 0.0f,   1.0f,  // bottom-left  4
+    0.0f, 0.0f, 0.0f,   0.0f, 0.0f,   1.0f,  // bottom-left  4
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f,   1.0f,  // bottom-right 5
+    1.0f, 1.0f, 0.0f,   1.0f, 1.0f,   1.0f,  // top-right    6
 
     /*left face*/
-    -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   2.0f,  // top-left     7
-    -0.5f, -0.5f, -0.5f,   1.0f, 0.0f,   2.0f,  // bottom-left  4
-    -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   2.0f,  // bottom-left  0
-    -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   2.0f,  // bottom-left  0
-    -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,   2.0f,  // top-left     3
-    -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   2.0f,  // top-left     7
+    0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   2.0f,  // top-left     7
+    0.0f, 0.0f, 0.0f,   1.0f, 0.0f,   2.0f,  // bottom-left  4
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   2.0f,  // bottom-left  0
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   2.0f,  // bottom-left  0
+    0.0f, 1.0f, 1.0f,   0.0f, 1.0f,   2.0f,  // top-left     3
+    0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   2.0f,  // top-left     7
 
     /*right face*/
-     0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   3.0f,  // top-right    6
-     0.5f, -0.5f, -0.5f,   1.0f, 0.0f,   3.0f,  // bottom-right 5
-     0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   3.0f,  // bottom-right 1
-     0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   3.0f,  // bottom-right 1
-     0.5f,  0.5f,  0.5f,   0.0f, 1.0f,   3.0f,  // top-right    2
-     0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   3.0f,  // top-right    6
+    1.0f, 1.0f, 0.0f,   1.0f, 1.0f,   3.0f,  // top-right    6
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f,   3.0f,  // bottom-right 5
+    1.0f, 0.0f, 1.0f,   0.0f, 0.0f,   3.0f,  // bottom-right 1
+    1.0f, 0.0f, 1.0f,   0.0f, 0.0f,   3.0f,  // bottom-right 1
+    1.0f, 1.0f, 1.0f,   0.0f, 1.0f,   3.0f,  // top-right    2
+    1.0f, 1.0f, 0.0f,   1.0f, 1.0f,   3.0f,  // top-right    6
 
     /*top face*/
-    -0.5f,  0.5f,  0.5f,   1.0f, 0.0f,   4.0f,  // top-left     3
-     0.5f,  0.5f,  0.5f,   0.0f, 0.0f,   4.0f,  // top-right    2
-     0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   4.0f,  // top-right    6
-     0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   4.0f,  // top-right    6
-    -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   4.0f,  // top-left     7
-    -0.5f,  0.5f,  0.5f,   1.0f, 0.0f,   4.0f,  // top-left     3
+    0.0f, 1.0f, 1.0f,   1.0f, 0.0f,   4.0f,  // top-left     3
+    1.0f, 1.0f, 1.0f,   0.0f, 0.0f,   4.0f,  // top-right    2
+    1.0f, 1.0f, 0.0f,   0.0f, 1.0f,   4.0f,  // top-right    6
+    1.0f, 1.0f, 0.0f,   0.0f, 1.0f,   4.0f,  // top-right    6
+    0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   4.0f,  // top-left     7
+    0.0f, 1.0f, 1.0f,   1.0f, 0.0f,   4.0f,  // top-left     3
 
     /*bottom face*/
-    -0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   5.0f,  // bottom-left  0
-     0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   5.0f,  // bottom-right 1
-     0.5f, -0.5f, -0.5f,   0.0f, 1.0f,   5.0f,  // bottom-right 5
-     0.5f, -0.5f, -0.5f,   0.0f, 1.0f,   5.0f,  // bottom-right 5
-    -0.5f, -0.5f, -0.5f,   1.0f, 1.0f,   5.0f,  // bottom-left  4
-    -0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   5.0f,  // bottom-left  0
+    0.0f, 0.0f, 1.0f,   1.0f, 0.0f,   5.0f,  // bottom-left  0
+    1.0f, 0.0f, 1.0f,   0.0f, 0.0f,   5.0f,  // bottom-right 1
+    1.0f, 0.0f, 0.0f,   0.0f, 1.0f,   5.0f,  // bottom-right 5
+    1.0f, 0.0f, 0.0f,   0.0f, 1.0f,   5.0f,  // bottom-right 5
+    0.0f, 0.0f, 0.0f,   1.0f, 1.0f,   5.0f,  // bottom-left  4
+    0.0f, 0.0f, 1.0f,   1.0f, 0.0f,   5.0f,  // bottom-left  0
 };
 
 constexpr int CUBE_VB_ELEMENTS_COUNT = sizeof(cube_vertices) / sizeof(float);  // Count of elements in cube_vertices vertex buffer (or VB)

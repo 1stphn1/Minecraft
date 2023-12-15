@@ -64,20 +64,23 @@ void KeyboardInput(GLFWwindow* window)
         player.y_pos -= player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+    if (glfwGetKey(window, GLFW_KEY_LEFT))
+    {
         player.xz_angle -= player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
 
-        if (player.xz_angle < 0.0f) {
+        if (player.xz_angle < 0.0f)
+        {
             player.xz_angle = 360.0f + player.xz_angle;
         }
-
-    } else if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT))
+    {
         player.xz_angle += player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
 
-        if (player.xz_angle > 360.0f) {
+        if (player.xz_angle > 360.0f)
+        {
             player.xz_angle = player.xz_angle - 360.0f;
         }
-        
     }
 
     if (glfwGetKey(window, GLFW_KEY_DOWN)) {

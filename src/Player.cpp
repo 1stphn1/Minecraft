@@ -9,6 +9,8 @@ void Player::GravityAcc()
         m_YSpeed -= GravityAcceleration * Gla::Timer::DeltaTime() * 0.5f;
     }
 
+    // TODO: add static variables for x and z that store players block coords; if player moves from that block, only then calculate height. The current code calculates height needlessly a lot of times
+
     int height;
     for (height = CHUNK_HEIGHT - 1; height >= (int)PLAYER_HEIGHT; height--)
     {
@@ -20,18 +22,19 @@ void Player::GravityAcc()
             throw std::logic_error("Trying to dereference null from Player::GravityAcc()");
         }
 
-        if (y_pos - height > PLAYER_HEIGHT) {
-            break;
-        }
+        // if (y_pos - height > PLAYER_HEIGHT) {
+        //     break;
+        // }
 
-        if (Chunk::chunks[player.ChunkX()][player.ChunkZ()]->GetBlockType( (int)(player.GetX() + 0.5f) % CHUNK_LENGHT, height, (int)(player.GetZ() + 0.5f) % CHUNK_LENGHT ) != BlockType::NO_BLOCK)
+        if (Chunk::chunks[player.ChunkX()][player.ChunkZ()]->GetBlockType( player.BlockX(), height, player.BlockZ() ) != BlockType::NO_BLOCK)
         {
             // LOG("X: " << (int)(player.GetX()) % CHUNK_LENGHT << " - Y: " << height << " - Z: " << (int)(player.GetZ()) % CHUNK_LENGHT);
             break;
         }
     }
 
-    if (y_pos - height <= PLAYER_HEIGHT) {
+    // Adds 1 because the height of the top layer of a block is always exactly for 1.0 greater than its index
+    if (y_pos - (height + 1) <= PLAYER_HEIGHT) {
         m_YSpeed = 0.0f;
         m_ShouldFall = false;
         return;
@@ -52,36 +55,36 @@ void Player::Jump()
 
 void Player::UpdateX(float value_to_add)
 {
-    int x = (int)(player.GetX() + 0.5f) % CHUNK_LENGHT;
-    int y = (int)(y_pos + 0.5f);
-    int z = (int)(player.GetZ() + 0.5f) % CHUNK_LENGHT;
+    int x = player.BlockX();
+    int y = player.BlockY();
+    int z = player.BlockZ();
 
-    if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT) {
+    if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT)
+    {
         LOG("Goes through X!");
         x_pos += value_to_add;
         return;
     }
 
-    if (z < 0 || z >= CHUNK_LENGHT) {
-        LOG("z == " << z << " in Player::UpdateX()");
-
-        x_pos += value_to_add;
-        return;
-        // throw std::logic_error("z is out of bounds in Player::UpdateX()");
-    }
+    #ifdef GLA_DEBUG
+        if (z < 0 || z >= CHUNK_LENGHT)
+        {
+            throw std::logic_error("z is out of bounds in Player::UpdateX()");
+        }
+    #endif GLA_DEBUG
 
     if (value_to_add < 0.0f)
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x - 1, y - 1, z) == NO_BLOCK
-           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.099f)
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x - 1, y - 1, z) == NO_BLOCK ||
+            std::abs( x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() - 1) ) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
     }
     else
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x + 1, y - 1, z) == NO_BLOCK
-           || std::abs(x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + (int)(x_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.099f)
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x + 1, y - 1, z) == NO_BLOCK ||
+            std::abs( x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() + 1) ) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
@@ -90,36 +93,36 @@ void Player::UpdateX(float value_to_add)
 
 void Player::UpdateZ(float value_to_add)
 {
-    int x = (int)(player.GetX() + 0.5f) % CHUNK_LENGHT;
-    int y = (int)(y_pos + 0.5f);
-    int z = (int)(player.GetZ() + 0.5f) % CHUNK_LENGHT;
+    int x = player.BlockX();
+    int y = player.BlockY();
+    int z = player.BlockZ();
 
-    if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT) {
+    if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT)
+    {
         LOG("Goes through Z!");
         z_pos += value_to_add;
         return;
     }
 
-    if (x < 0 || x >= CHUNK_LENGHT) {
-        LOG("x == " << x << " in Player::UpdateZ()");
-
-        x_pos += value_to_add;
-        return;
-        // throw std::logic_error("z is out of bounds in Player::UpdateX()");
-    }
+    #ifdef GLA_DEBUG
+        if (x < 0 || x >= CHUNK_LENGHT)
+        {
+            throw std::logic_error("z is out of bounds in Player::UpdateX()");
+        }
+    #endif GLA_DEBUG
 
     if (value_to_add < 0.0f)
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK
-           || std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + (int)(z_pos + 0.5f) % CHUNK_LENGHT - 1) + 0.5f )) >= 0.099f)
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK ||
+            std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() - 1))) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }
     }
     else
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK
-           || std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + (int)(z_pos) % CHUNK_LENGHT + 1) - 0.5f )) >= 0.099f)
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK ||
+            std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() + 1))) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }

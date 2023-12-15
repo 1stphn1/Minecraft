@@ -63,6 +63,11 @@ public:
     constexpr float GetY() const { return y_pos; }
     constexpr float GetZ() const { return z_pos; }
 
+    // Coordinates of the block of player's camera
+    constexpr int BlockX() const { return (int)x_pos % CHUNK_LENGHT; }
+    constexpr int BlockY() const { return (int)y_pos; }
+    constexpr int BlockZ() const { return (int)z_pos % CHUNK_LENGHT; }
+
     // Camera angles
     constexpr float GetXZangle() const { return xz_angle; }
     constexpr float GetYangle()  const { return y_angle; }
@@ -84,7 +89,8 @@ private:
     static constexpr float GravityAcceleration = 9.81f;
     static constexpr float BASE_MOVE_DIST = 0.06f;
     static constexpr float BASE_MOVE_ANGLE = 2.4f;
-    static constexpr float PLAYER_HEIGHT = 2.0f;
+    static constexpr float PLAYER_HEIGHT = 1.85f;
+    static constexpr float MIN_DISTANCE_FROM_BLOCK = 0.099f;
 };
 
 inline Player player;
