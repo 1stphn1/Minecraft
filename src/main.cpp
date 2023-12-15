@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 
     Gla::Timer out_of_loop_timer;
 
-    /* Loop until the user closes the window */
+    /* Game loop */
     while (!glfwWindowShouldClose(window))
     {
         Gla::Timer loop_timer;

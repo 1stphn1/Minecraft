@@ -55,6 +55,7 @@ public:
     float xz_angle;
     float y_angle;
 
+    // These are the coordinates of the chunk where the player is located
     constexpr int ChunkX() const { return (int)x_pos / CHUNK_LENGHT; }
     constexpr int ChunkZ() const { return (int)z_pos / CHUNK_LENGHT; }
 
@@ -62,6 +63,7 @@ public:
     constexpr float GetY() const { return y_pos; }
     constexpr float GetZ() const { return z_pos; }
 
+    // Camera angles
     constexpr float GetXZangle() const { return xz_angle; }
     constexpr float GetYangle()  const { return y_angle; }
 
