@@ -76,7 +76,7 @@ void Player::UpdateX(float value_to_add)
     if (value_to_add < 0.0f)
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x - 1, y - 1, z) == NO_BLOCK ||
-            std::abs( x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() - 1) ) ) >= MIN_DISTANCE_FROM_BLOCK)
+            std::abs( x_pos - (float)(ChunkX() * CHUNK_LENGHT + player.BlockX()) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
@@ -84,7 +84,7 @@ void Player::UpdateX(float value_to_add)
     else
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x + 1, y - 1, z) == NO_BLOCK ||
-            std::abs( x_pos - ( (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() + 1) ) ) >= MIN_DISTANCE_FROM_BLOCK)
+            std::abs( x_pos - (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
@@ -114,7 +114,7 @@ void Player::UpdateZ(float value_to_add)
     if (value_to_add < 0.0f)
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK ||
-            std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() - 1))) >= MIN_DISTANCE_FROM_BLOCK)
+            std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ()) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }
@@ -122,7 +122,7 @@ void Player::UpdateZ(float value_to_add)
     else
     {
         if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK ||
-            std::abs(z_pos - ( (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() + 1))) >= MIN_DISTANCE_FROM_BLOCK)
+            std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }

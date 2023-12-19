@@ -1,5 +1,6 @@
 bin32/
 imgui/
+obj/
 src/vertices.cpp
 Minecraft.exe
 MinecraftDebug.exe
