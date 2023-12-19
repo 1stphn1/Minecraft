@@ -3,7 +3,8 @@
         {
             "name": "windows-gcc-x86",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src"
             ],
             "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
             "cStandard": "c23",

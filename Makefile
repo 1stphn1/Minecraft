@@ -55,7 +55,7 @@ compile:
 	g++ -Wall -std=$(STANDARD) $(ARCHITECTURE) $(OPTIMIZATION) -o Minecraft \
 	obj/VertexBufferLayout.o obj/IndexBuffer.o obj/VertexBuffer.o obj/UniformBuffer.o obj/VertexArray.o obj/GlaBase.o \
 	obj/Shader.o obj/Renderer.o obj/Texture.o obj/Noise.o obj/Chunk.o obj/Player.o obj/main.o obj/stb_image.o \
-	-lglfw3 -lopengl32 -lGdi32 -lglu32 -lglew32
+	-l:libglfw3.a -lopengl32 -lGdi32 -lglu32 -lglew32
 
 run:
 	./Minecraft
@@ -112,7 +112,7 @@ compile_32bit:
 	g++ -Wall -std=$(STANDARD) -m32 $(OPTIMIZATION) -o bin32/Minecraft \
 	obj32/VertexBufferLayout.o obj32/IndexBuffer.o obj32/VertexBuffer.o obj32/UniformBuffer.o obj32/VertexArray.o \
 	obj32/Definitions.o obj32/Shader.o obj32/Renderer.o obj32/Texture.o obj32/Noise.o obj32/Chunk.o obj32/main.o obj32/stb_image.o \
-	-l glfw3 -lopengl32 -lGdi32 -lglu32 -lglew32
+	-llibglfw3 -lopengl32 -lGdi32 -lglu32 -lglew32
 
 run_32bit:
 	./bin32/Minecraft
