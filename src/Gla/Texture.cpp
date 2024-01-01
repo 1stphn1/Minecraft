@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "Texture.hpp"
 
 #include "../stb/stb_image.h"
 

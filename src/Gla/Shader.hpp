@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GlaBase.h"
-#include "UniformBuffer.h"
+#include "GlaBase.hpp"
+#include "UniformBuffer.hpp"
 
 #include <fstream>
 #include <sstream>
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
 
 namespace Gla
 {

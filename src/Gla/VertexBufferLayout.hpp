@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GlaBase.h"
+#include "GlaBase.hpp"
 
 #include <vector>
 
@@ -14,7 +14,7 @@ namespace Gla
         unsigned int count;
         unsigned int normalized;
 
-        static unsigned int GetSizeOfType(unsigned int _type)
+        static constexpr unsigned int GetSizeOfType(unsigned int _type)
         {
             switch (_type) {
                 case GL_FLOAT:          return sizeof(GLfloat);

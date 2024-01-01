@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GlaBase.h"
+#include "GlaBase.hpp"
 
-#include "IndexBuffer.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "VertexArray.h"
-#include "Shader.h"
+#include "IndexBuffer.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
+#include "VertexArray.hpp"
+#include "Shader.hpp"
 
 namespace Gla
 {

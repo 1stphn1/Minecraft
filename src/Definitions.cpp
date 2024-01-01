@@ -1,4 +1,4 @@
-// #include "Definitions.h"
+// #include "Definitions.hpp"
 
 // std::string GLErrorToString(GLenum error_code)
 // {

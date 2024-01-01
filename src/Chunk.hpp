@@ -4,9 +4,9 @@
 #include <bitset>
 #include <unordered_map>
 
-#include "Definitions.h"
-#include "Gla/Shader.h"
-#include "Player.h"
+#include "Definitions.hpp"
+#include "Gla/Shader.hpp"
+#include "Player.hpp"
 
 enum BlockType {
     NO_BLOCK,
@@ -64,7 +64,7 @@ public:
         //         return GRASS_BLOCK_VALUE;
         // }
 
-        return block_type * 10.0f;
+        return (float)block_type * 10.0f;
     }
 };
 

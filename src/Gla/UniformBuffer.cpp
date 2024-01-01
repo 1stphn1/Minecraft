@@ -1,8 +1,9 @@
-#include "UniformBuffer.h"
+#include "UniformBuffer.hpp"
 
 namespace Gla
 {
-    UniformBuffer::UniformBuffer(const void* data /*= nullptr*/)
+    UniformBuffer::UniformBuffer(unsigned int binding_point, const void* data /*= nullptr*/)
+        : m_BindingPoint(binding_point)
     {
         GLCall( glGenBuffers(1, &m_RendererID) );
         GLCall( glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID) );
@@ -16,6 +17,6 @@ namespace Gla
 
     void UniformBuffer::Bind() const
     {
-        GLCall( glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_RendererID) );
+        GLCall( glBindBufferBase(GL_UNIFORM_BUFFER, m_BindingPoint, m_RendererID) );
     }
 }

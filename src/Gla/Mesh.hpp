@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GlaBase.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Texture.h"
+#include "GlaBase.hpp"
+#include "VertexArray.hpp"
+#include "Shader.hpp"
+#include "Texture.hpp"
 
 namespace Gla
 {

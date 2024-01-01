@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Definitions.h"
-#include "Gla/UniformBuffer.h"
-#include "Gla/Timer.h"
+#include "Definitions.hpp"
+#include "Gla/UniformBuffer.hpp"
+#include "Gla/Timer.hpp"
 
 class Player
 {

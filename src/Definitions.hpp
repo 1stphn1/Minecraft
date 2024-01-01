@@ -44,10 +44,10 @@ constexpr int VISIBLE_CHUNKS = VIEW_DISTANCE * 2 * VIEW_DISTANCE * 2;
 constexpr float FOV_Y = 10.0f;
 const     float FOV_X = glm::degrees( 2 * glm::atan(glm::tan( glm::radians(FOV_Y) * 0.5f ) * ((float)WINDOW_WIDTH / (float)WINDOW_HEIGHT)) );
 
-constexpr glm::vec3 x_axis(1.0f, 0.0f, 0.0f);  // Rotate around the x-axis
-constexpr glm::vec3 y_axis(0.0f, 1.0f, 0.0f);  // Rotate around the y-axis
-constexpr glm::vec3 z_axis(0.0f, 0.0f, 1.0f);
-const     glm::mat4 PROJECTION_MTR = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(FOV_Y), 1280.0f / 960.0f, 0.1f, 1.0f);
+const glm::vec3 x_axis(1.0f, 0.0f, 0.0f);  // Rotate around the x-axis
+const glm::vec3 y_axis(0.0f, 1.0f, 0.0f);  // Rotate around the y-axis
+const glm::vec3 z_axis(0.0f, 0.0f, 1.0f);
+const glm::mat4 PROJECTION_MTR = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(FOV_Y), 1280.0f / 960.0f, 0.1f, 1.0f);
 
 constexpr float BLOCK_SIDE_LENGHT = 1.0f;
 constexpr int   WATER_LEVEL = 30;

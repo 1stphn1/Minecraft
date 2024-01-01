@@ -1,4 +1,4 @@
-#include "VertexBufferLayout.h"
+#include "VertexBufferLayout.hpp"
 
 namespace Gla
 {

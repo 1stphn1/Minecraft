@@ -23,33 +23,33 @@ all: \
 	compile
 
 main:
-	g++ -c -o obj/main.o 				src/main.cpp
+	g++ -std=$(STANDARD) -c -o obj/main.o 				 src/main.cpp
 gla_base:
-	g++ -c -o obj/GlaBase.o 			src/Gla/GlaBase.cpp
+	g++ -std=$(STANDARD) -c -o obj/GlaBase.o 			 src/Gla/GlaBase.cpp
 vertexbuffer:
-	g++ -c -o obj/VertexBuffer.o 		src/Gla/VertexBuffer.cpp
+	g++ -std=$(STANDARD) -c -o obj/VertexBuffer.o 		 src/Gla/VertexBuffer.cpp
 vblayout:
-	g++ -c -o obj/VertexBufferLayout.o  src/Gla/VertexBufferLayout.cpp
+	g++ -std=$(STANDARD) -c -o obj/VertexBufferLayout.o  src/Gla/VertexBufferLayout.cpp
 uniformbuffer:
-	g++ -c -o obj/UniformBuffer.o 		src/Gla/UniformBuffer.cpp
+	g++ -std=$(STANDARD) -c -o obj/UniformBuffer.o 		 src/Gla/UniformBuffer.cpp
 indexbuffer:
-	g++ -c -o obj/IndexBuffer.o 		src/Gla/IndexBuffer.cpp
+	g++ -std=$(STANDARD) -c -o obj/IndexBuffer.o 		 src/Gla/IndexBuffer.cpp
 vertexarray:
-	g++ -c -o obj/VertexArray.o 		src/Gla/VertexArray.cpp
+	g++ -std=$(STANDARD) -c -o obj/VertexArray.o 		 src/Gla/VertexArray.cpp
 shadero:
-	g++ -c -o obj/Shader.o 				src/Gla/Shader.cpp
+	g++ -std=$(STANDARD) -c -o obj/Shader.o 			 src/Gla/Shader.cpp
 renderer:
-	g++ -c -o obj/Renderer.o 			src/Gla/Renderer.cpp
+	g++ -std=$(STANDARD) -c -o obj/Renderer.o 			 src/Gla/Renderer.cpp
 texture:
-	g++ -c -o obj/Texture.o 			src/Gla/Texture.cpp
+	g++ -std=$(STANDARD) -c -o obj/Texture.o 			 src/Gla/Texture.cpp
 noise:
-	g++ -c -o obj/Noise.o 				src/Noise.cpp
+	g++ -std=$(STANDARD) -c -o obj/Noise.o 				 src/Noise.cpp
 chunk:
-	g++ -c -o obj/Chunk.o 				src/Chunk.cpp
+	g++ -std=$(STANDARD) -c -o obj/Chunk.o 				 src/Chunk.cpp
 player:
-	g++ -c -o obj/Player.o 				src/Player.cpp
+	g++ -std=$(STANDARD) -c -o obj/Player.o 			 src/Player.cpp
 stb:
-	g++ -c -o obj/stb_image.o 			src/stb/stb_image.cpp
+	g++ -std=$(STANDARD) -c -o obj/stb_image.o 			 src/stb/stb_image.cpp
 
 compile:
 	g++ -Wall -std=$(STANDARD) $(ARCHITECTURE) $(OPTIMIZATION) -o Minecraft \

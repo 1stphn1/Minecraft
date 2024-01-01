@@ -7,12 +7,13 @@
 #include <random>
 #include <array>
 
-#include "Definitions.h"
+#include "Definitions.hpp"
 
-#include "Gla/Gla.h"
+#include "Gla/Gla.hpp"
+#include "glm/glm.hpp"
 
-#include "Chunk.h"
-#include "Player.h"
+#include "Chunk.hpp"
+#include "Player.hpp"
 
 using namespace std::chrono_literals;
 
@@ -32,35 +33,44 @@ void KeyboardInput(GLFWwindow* window)
 
     glfwPollEvents();
     
-    if (glfwGetKey(window, GLFW_KEY_W)) {
+    if (glfwGetKey(window, GLFW_KEY_W))
+    {
         player.UpdateX(-glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
         player.UpdateZ(-glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
         // player.x_pos -= glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         // player.z_pos -= glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    } else if (glfwGetKey(window, GLFW_KEY_S)) {
+    } else if (glfwGetKey(window, GLFW_KEY_S))
+    {
         // player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
         player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos += glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
 
-    if (glfwGetKey(window, GLFW_KEY_D)) {
+    if (glfwGetKey(window, GLFW_KEY_D))
+    {
         player.x_pos += glm::cos(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos += glm::sin(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    } else if (glfwGetKey(window, GLFW_KEY_A)) {
+    }
+    else if (glfwGetKey(window, GLFW_KEY_A))
+    {
         player.x_pos -= glm::cos(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
         player.z_pos -= glm::sin(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
     
-    if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+    if (glfwGetKey(window, GLFW_KEY_SPACE))
+    {
         static Gla::Timer time_after_pushing;
 
         if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
         {
             player.Jump();
             time_after_pushing.Reset();
-        }        
+        }
+
         // player.y_pos += player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    } else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+    }
+    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+    {
         player.y_pos -= player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
     }
 
@@ -83,9 +93,12 @@ void KeyboardInput(GLFWwindow* window)
         }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+    if (glfwGetKey(window, GLFW_KEY_DOWN))
+    {
         player.y_angle -= player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
-    } else if (glfwGetKey(window, GLFW_KEY_UP)) {
+    }
+    else if (glfwGetKey(window, GLFW_KEY_UP))
+    {
         player.y_angle += player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
     }
 
@@ -126,7 +139,8 @@ void KeyboardInput(GLFWwindow* window)
         }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+    {
         glfwSetWindowShouldClose(window, true);
     }
 }
@@ -140,9 +154,12 @@ static void cursorPosCallback(GLFWwindow* window, double x_pos, double y_pos)
     player.xz_angle += (x_pos - old_x_pos) * 0.7;
     player.y_angle  += (y_pos - old_y_pos) * 0.7;
 
-    if (player.xz_angle < 0.0f) {
+    if (player.xz_angle < 0.0f)
+    {
         player.xz_angle = 360.0f + player.xz_angle;
-    } else if (player.xz_angle > 360.0f) {
+    }
+    else if (player.xz_angle > 360.0f)
+    {
         player.xz_angle = player.xz_angle - 360.0f;
     }
     
@@ -177,7 +194,8 @@ int main(int argc, char *argv[])
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Window", nullptr, nullptr);
 
-    if (!window) {
+    if (!window)
+    {
         std::cout << "Failed to create window.\n";
         glfwTerminate();
         return EXIT_FAILURE;
@@ -188,15 +206,19 @@ int main(int argc, char *argv[])
 
     glfwSwapInterval(1);
 
-    if (glfwRawMouseMotionSupported()) {
+    if (glfwRawMouseMotionSupported())
+    {
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    } else {
+    }
+    else
+    {
         std::cout << "GLFW raw mouse motion not suppported\n";
     }
 
     glfwSetCursorPosCallback(window, cursorPosCallback);
 
-    if (glewInit() != GLEW_OK) {
+    if (glewInit() != GLEW_OK)
+    {
         std::cout << "Glew init error\n";
     }
 
@@ -207,9 +229,6 @@ int main(int argc, char *argv[])
 
     GLCall( glEnable(GL_BLEND) );
     GLCall( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-
-    // std::vector<float> terrain_vertices;
-    // std::vector<float> transparent_texture_vertices;
 
     {  // without this block, vb and ib go out of scope after glfwTerminate, so glDeleteBuffers in destructors of IndexBuffer and VertexBuffer doesn't work
     glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(10.0f), 1280.0f / 960.0f, 0.1f, 1.0f);
@@ -316,15 +335,19 @@ int main(int argc, char *argv[])
     world_va.AddBuffer(world_vb, *layout);
     delete layout;
     Gla::Shader world_shader("shader/VertShader.vert", "shader/FragShader.frag");
+    Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
 
     Gla::Mesh world_mesh(world_va, world_shader);
+    Gla::Mesh shadow_mesh(world_va, shadow_shader);
 
     world_shader.Bind();
     int sampler_data[] = { 0, 1, 2, 3, 4, 5 };
     world_shader.SetUniform1iv("u_Samplers", 6, sampler_data);
 
-    Gla::UniformBuffer ubo(&PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
+    Gla::UniformBuffer ubo(0, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
+    Gla::UniformBuffer ubo_sun(1, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
     ubo.Bind();
+    // ubo_sun.Bind();
 
     player.SetUniformBuffer(ubo);
 

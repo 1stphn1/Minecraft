@@ -1,5 +1,5 @@
-#include "Player.h"
-#include "Chunk.h"
+#include "Player.hpp"
+#include "Chunk.hpp"
 
 void Player::GravityAcc()
 {
@@ -71,7 +71,7 @@ void Player::UpdateX(float value_to_add)
         {
             throw std::logic_error("z is out of bounds in Player::UpdateX()");
         }
-    #endif GLA_DEBUG
+    #endif
 
     if (value_to_add < 0.0f)
     {
@@ -109,7 +109,7 @@ void Player::UpdateZ(float value_to_add)
         {
             throw std::logic_error("z is out of bounds in Player::UpdateX()");
         }
-    #endif GLA_DEBUG
+    #endif
 
     if (value_to_add < 0.0f)
     {

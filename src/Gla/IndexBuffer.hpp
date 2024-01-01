@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GlaBase.h"
+#include "GlaBase.hpp"
 
 namespace Gla
 {

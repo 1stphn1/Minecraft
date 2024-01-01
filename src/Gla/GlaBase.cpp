@@ -1,4 +1,4 @@
-#include "GlaBase.h"
+#include "GlaBase.hpp"
 
 const char* GLErrorToString(GLenum error_code)
 {

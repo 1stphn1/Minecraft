@@ -1,4 +1,4 @@
-#include "Chunk.h"
+#include "Chunk.hpp"
 #include "Noise.h"
 
 #include <random>

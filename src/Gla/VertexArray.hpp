@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GlaBase.h"
+#include "GlaBase.hpp"
 
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
+#include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
 
 namespace Gla
 {
