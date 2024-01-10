@@ -335,10 +335,10 @@ int main(int argc, char *argv[])
     world_va.AddBuffer(world_vb, *layout);
     delete layout;
     Gla::Shader world_shader("shader/VertShader.vert", "shader/FragShader.frag");
-    Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
+    // Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
 
     Gla::Mesh world_mesh(world_va, world_shader);
-    Gla::Mesh shadow_mesh(world_va, shadow_shader);
+    // Gla::Mesh shadow_mesh(world_va, shadow_shader);
 
     world_shader.Bind();
     int sampler_data[] = { 0, 1, 2, 3, 4, 5 };

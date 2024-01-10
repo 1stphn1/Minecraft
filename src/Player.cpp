@@ -3,7 +3,8 @@
 
 void Player::GravityAcc()
 {
-    if (m_ShouldFall) {
+    if (m_ShouldFall)
+    {
         m_YSpeed -= GravityAcceleration * Gla::Timer::DeltaTime() * 0.5f;
         y_pos += m_YSpeed * Gla::Timer::DeltaTime();
         m_YSpeed -= GravityAcceleration * Gla::Timer::DeltaTime() * 0.5f;
@@ -34,11 +35,14 @@ void Player::GravityAcc()
     }
 
     // Adds 1 because the height of the top layer of a block is always exactly for 1.0 greater than its index
-    if (y_pos - (height + 1) <= PLAYER_HEIGHT) {
+    if (y_pos - (height + 1) <= PLAYER_HEIGHT)
+    {
         m_YSpeed = 0.0f;
         m_ShouldFall = false;
         return;
-    } else {
+    }
+    else
+    {
         m_ShouldFall = true;
     }
 }
@@ -58,33 +62,41 @@ void Player::UpdateX(float value_to_add)
     int x = player.BlockX();
     int y = player.BlockY();
     int z = player.BlockZ();
+    int chunk_x_index = player.ChunkX();
 
     if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT)
     {
-        LOG("Goes through X!");
-        x_pos += value_to_add;
-        return;
+        LOG("Goes through x!");
     }
-
-    #ifdef GLA_DEBUG
-        if (z < 0 || z >= CHUNK_LENGHT)
-        {
-            throw std::logic_error("z is out of bounds in Player::UpdateX()");
-        }
-    #endif
 
     if (value_to_add < 0.0f)
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x - 1, y - 1, z) == NO_BLOCK ||
-            std::abs( x_pos - (float)(ChunkX() * CHUNK_LENGHT + player.BlockX()) ) >= MIN_DISTANCE_FROM_BLOCK)
+        int xcoord_to_check = x - 1;  // left from x
+
+        if (xcoord_to_check < 0)
+        {
+            chunk_x_index--;
+            xcoord_to_check = CHUNK_LENGHT - 1;
+        }
+        
+        if (Chunk::chunks[chunk_x_index][ChunkZ()]->GetBlockType(xcoord_to_check, y - 1, z) == NO_BLOCK ||
+            std::abs( x_pos - (float)(chunk_x_index * CHUNK_LENGHT + (xcoord_to_check % CHUNK_LENGHT)) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
     }
     else
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x + 1, y - 1, z) == NO_BLOCK ||
-            std::abs( x_pos - (float)(ChunkX() * CHUNK_LENGHT + player.BlockX() + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
+        int xcoord_to_check = x + 1;  // right from x
+        
+        if (xcoord_to_check >= CHUNK_LENGHT)
+        {
+            chunk_x_index++;
+            xcoord_to_check = 0;
+        }
+        
+        if (Chunk::chunks[chunk_x_index][ChunkZ()]->GetBlockType(xcoord_to_check, y - 1, z) == NO_BLOCK ||
+            std::abs( x_pos - (float)(chunk_x_index * CHUNK_LENGHT + (xcoord_to_check % CHUNK_LENGHT)) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
