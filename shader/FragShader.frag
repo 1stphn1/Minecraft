@@ -29,6 +29,7 @@ uniform sampler2D u_Samplers[6];
 
 in vec2 v_TexCoord;
 flat in float v_Face;
+// flat in float v_LightIntensity;
 
 void main()
 {
@@ -173,6 +174,8 @@ void main()
     {
         color = vec4(0.92f, 0.07f, 0.07f, 1.0f);
     }
+
+    // light_intensity = v_LightIntensity;
 
     color.r *= light_intensity;
     color.g *= light_intensity;

@@ -9,8 +9,11 @@ layout(binding = 0) uniform u_ViewProjectionMatrix
     mat4 u_Mvp;
 };
 
+uniform mat4 u_SunMvp;
+
 out vec2 v_TexCoord;
 flat out float v_Face;
+// flat out float v_LightIntensity;
 
 void main()
 {
@@ -18,4 +21,14 @@ void main()
     
     v_TexCoord = a_TexCoord;
     v_Face = a_Face;
+
+    // vec4 pos = u_SunMvp * vec4(a_Position, 1.0f);
+
+    // if (pos.z > 0.0 && pos.x > -pos.w && pos.x < pos.w && pos.y > -pos.w && pos.y < pos.w) {
+    //     // The sun can see the vertex
+    //     v_LightIntensity = 1.0f;
+    // } else {
+    //     // The sun cannot see the vertex
+    //     v_LightIntensity = 0.6f;
+    // }
 }

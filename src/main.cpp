@@ -231,8 +231,8 @@ int main(int argc, char *argv[])
     GLCall( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
     {  // without this block, vb and ib go out of scope after glfwTerminate, so glDeleteBuffers in destructors of IndexBuffer and VertexBuffer doesn't work
-    glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(10.0f), 1280.0f / 960.0f, 0.1f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(player.x_pos, player.y_pos, player.z_pos));
+    // glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(10.0f), 1280.0f / 960.0f, 0.1f, 1.0f);
+    // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(player.x_pos, player.y_pos, player.z_pos));
 
     const Gla::Texture2D grass_texture("assets/grass.png");
     const Gla::Texture2D grassnd_texture("assets/grassnd.png");
@@ -343,9 +343,12 @@ int main(int argc, char *argv[])
     world_shader.Bind();
     int sampler_data[] = { 0, 1, 2, 3, 4, 5 };
     world_shader.SetUniform1iv("u_Samplers", 6, sampler_data);
+    glm::mat4 sun_view_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(player.y_angle), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(player.xz_angle), y_axis)
+    * glm::translate(glm::mat4(1.0f), glm::vec3(-PLAYER_DEFAULT_X, -PLAYER_DEFAULT_Y, -PLAYER_DEFAULT_Z));  // For now sun is at player's beginning coords
+    world_shader.SetUniformMat4f("u_SunMvp", PROJECTION_MTR * sun_view_matrix);
 
     Gla::UniformBuffer ubo(0, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
-    Gla::UniformBuffer ubo_sun(1, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
+    // Gla::UniformBuffer ubo_sun(1, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
     ubo.Bind();
     // ubo_sun.Bind();
 

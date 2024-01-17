@@ -16,10 +16,10 @@ void Player::GravityAcc()
     for (height = CHUNK_HEIGHT - 1; height >= (int)PLAYER_HEIGHT; height--)
     {
         // LOG(height);
-        // LOG("ChunkX: " << player.ChunkX() << " - ChunkZ: " << player.ChunkZ());
-        // LOG("X: " << (int)(player.GetX()) % CHUNK_LENGHT << " - Y: " << height << " - Z: " << (int)(player.GetZ()) % CHUNK_LENGHT);
+        // LOG("ChunkX: " << ChunkX() << " - ChunkZ: " << ChunkZ());
+        // LOG("X: " << (int)(GetX()) % CHUNK_LENGHT << " - Y: " << height << " - Z: " << (int)(GetZ()) % CHUNK_LENGHT);
 
-        if (Chunk::chunks[player.ChunkX()][player.ChunkZ()] == nullptr) {
+        if (Chunk::chunks[ChunkX()][ChunkZ()] == nullptr) {
             throw std::logic_error("Trying to dereference null from Player::GravityAcc()");
         }
 
@@ -27,9 +27,9 @@ void Player::GravityAcc()
         //     break;
         // }
 
-        if (Chunk::chunks[player.ChunkX()][player.ChunkZ()]->GetBlockType( player.BlockX(), height, player.BlockZ() ) != BlockType::NO_BLOCK)
+        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType( BlockX(), height, BlockZ() ) != BlockType::NO_BLOCK)
         {
-            // LOG("X: " << (int)(player.GetX()) % CHUNK_LENGHT << " - Y: " << height << " - Z: " << (int)(player.GetZ()) % CHUNK_LENGHT);
+            // LOG("X: " << (int)(GetX()) % CHUNK_LENGHT << " - Y: " << height << " - Z: " << (int)(GetZ()) % CHUNK_LENGHT);
             break;
         }
     }
@@ -59,15 +59,15 @@ void Player::Jump()
 
 void Player::UpdateX(float value_to_add)
 {
-    int x = player.BlockX();
-    int y = player.BlockY();
-    int z = player.BlockZ();
-    int chunk_x_index = player.ChunkX();
+    int x = BlockX();
+    int y = BlockY();
+    int z = BlockZ();
+    int chunk_x_index = ChunkX();
 
-    if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT)
-    {
-        LOG("Goes through x!");
-    }
+    // if (x - 1 < 0 || x + 1 >= CHUNK_LENGHT)
+    // {
+    //     LOG("Goes through x!");
+    // }
 
     if (value_to_add < 0.0f)
     {
@@ -80,7 +80,7 @@ void Player::UpdateX(float value_to_add)
         }
         
         if (Chunk::chunks[chunk_x_index][ChunkZ()]->GetBlockType(xcoord_to_check, y - 1, z) == NO_BLOCK ||
-            std::abs( x_pos - (float)(chunk_x_index * CHUNK_LENGHT + (xcoord_to_check % CHUNK_LENGHT)) ) >= MIN_DISTANCE_FROM_BLOCK)
+            std::abs( x_pos - (float)(chunk_x_index * CHUNK_LENGHT + (xcoord_to_check % CHUNK_LENGHT) + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             x_pos += value_to_add;
         }
@@ -104,39 +104,83 @@ void Player::UpdateX(float value_to_add)
 }
 
 void Player::UpdateZ(float value_to_add)
-{
-    int x = player.BlockX();
-    int y = player.BlockY();
-    int z = player.BlockZ();
+{  
+    const int x = BlockX();
+    const int y = BlockY();
+    const int z = BlockZ();
+    int chunk_z_index = ChunkZ();
 
-    if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT)
-    {
-        LOG("Goes through Z!");
-        z_pos += value_to_add;
-        return;
-    }
-
-    #ifdef GLA_DEBUG
-        if (x < 0 || x >= CHUNK_LENGHT)
-        {
-            throw std::logic_error("z is out of bounds in Player::UpdateX()");
-        }
-    #endif
+    // if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT)
+    // {
+    //     LOG("Goes through z!");
+    // }
 
     if (value_to_add < 0.0f)
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK ||
-            std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ()) ) >= MIN_DISTANCE_FROM_BLOCK)
+        int zcoord_to_check = z - 1;  // Block in front of current player's z coord
+
+        if (zcoord_to_check < 0)  // If the block coordinate is lesser than 0, that means the block to check is in the neighbouring chunk
+        {
+            chunk_z_index--;
+            zcoord_to_check = CHUNK_LENGHT - 1;
+        }
+        
+        if (Chunk::chunks[ChunkX()][chunk_z_index]->GetBlockType(x, y - 1, zcoord_to_check) == NO_BLOCK ||
+            std::abs( z_pos - (float)(chunk_z_index * CHUNK_LENGHT + (zcoord_to_check % CHUNK_LENGHT) + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }
     }
     else
     {
-        if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK ||
-            std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + player.BlockZ() + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
+        int zcoord_to_check = z + 1;  // Block behind current player's z coord
+        
+        if (zcoord_to_check >= CHUNK_LENGHT) // If the block coordinate is greater than CHUNK_LENGHT, that means the block to check is in the neighbouring chunk
+        {
+            chunk_z_index++;
+            zcoord_to_check = 0;
+        }
+        
+        if (Chunk::chunks[ChunkX()][chunk_z_index]->GetBlockType(x, y - 1, zcoord_to_check) == NO_BLOCK ||
+            std::abs( z_pos - (float)(chunk_z_index * CHUNK_LENGHT + (zcoord_to_check % CHUNK_LENGHT)) ) >= MIN_DISTANCE_FROM_BLOCK)
         {
             z_pos += value_to_add;
         }
     }
+
+    
+    // int x = BlockX();
+    // int y = BlockY();
+    // int z = BlockZ();
+
+    // if (z - 1 < 0 || z + 1 >= CHUNK_LENGHT)
+    // {
+    //     LOG("Goes through Z!");
+    //     z_pos += value_to_add;
+    //     return;
+    // }
+
+    // #ifdef GLA_DEBUG
+    //     if (x < 0 || x >= CHUNK_LENGHT)
+    //     {
+    //         throw std::logic_error("z is out of bounds in Player::UpdateX()");
+    //     }
+    // #endif
+
+    // if (value_to_add < 0.0f)
+    // {
+    //     if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z - 1) == NO_BLOCK ||
+    //         std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + BlockZ()) ) >= MIN_DISTANCE_FROM_BLOCK)
+    //     {
+    //         z_pos += value_to_add;
+    //     }
+    // }
+    // else
+    // {
+    //     if (Chunk::chunks[ChunkX()][ChunkZ()]->GetBlockType(x, y - 1, z + 1) == NO_BLOCK ||
+    //         std::abs(z_pos - (float)(ChunkZ() * CHUNK_LENGHT + BlockZ() + 1) ) >= MIN_DISTANCE_FROM_BLOCK)
+    //     {
+    //         z_pos += value_to_add;
+    //     }
+    // }
 }

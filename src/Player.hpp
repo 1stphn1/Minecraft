@@ -4,13 +4,17 @@
 #include "Gla/UniformBuffer.hpp"
 #include "Gla/Timer.hpp"
 
+constexpr int PLAYER_DEFAULT_X = CHUNKS_ACROSS_X_AXIS / 2 * CHUNK_LENGHT;
+constexpr int PLAYER_DEFAULT_Y = CHUNK_HEIGHT; 
+constexpr int PLAYER_DEFAULT_Z = CHUNKS_ACROSS_Z_AXIS / 2 * CHUNK_LENGHT;
+
 class Player
 {
 public:
     Player()
-        : x_pos(CHUNKS_ACROSS_X_AXIS / 2 * CHUNK_LENGHT),
-          y_pos(CHUNK_HEIGHT),
-          z_pos(CHUNKS_ACROSS_Z_AXIS / 2 * CHUNK_LENGHT),
+        : x_pos(PLAYER_DEFAULT_X),
+          y_pos(PLAYER_DEFAULT_Y),
+          z_pos(PLAYER_DEFAULT_Z),
           xz_angle(0.0f),
           y_angle(0.0f),
           move_dist(BASE_MOVE_DIST),
