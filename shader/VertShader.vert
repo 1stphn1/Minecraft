@@ -9,18 +9,22 @@ layout(binding = 0) uniform u_ViewProjectionMatrix
     mat4 u_Mvp;
 };
 
-uniform mat4 u_SunMvp;
-
 out vec2 v_TexCoord;
+out vec4 v_LightSpacePos;
 flat out float v_Face;
 // flat out float v_LightIntensity;
 
+uniform mat4 u_SunMvp_;
+
 void main()
 {
-    gl_Position = u_Mvp * vec4(a_Position, 1.0f);
+    vec4 position = vec4(a_Position, 1.0f);
+
+    gl_Position = u_Mvp * position;
     
     v_TexCoord = a_TexCoord;
     v_Face = a_Face;
+    v_LightSpacePos = u_SunMvp_ * position;
 
     // vec4 pos = u_SunMvp * vec4(a_Position, 1.0f);
 

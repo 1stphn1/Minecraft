@@ -46,6 +46,8 @@ public:
         }
     }
 
+    constexpr void GravityOff() { m_DoGravity = false; }
+    constexpr void GravityOn()  { m_DoGravity = true;  }
     void GravityAcc();
     void Jump();
     void UpdateX(float value_to_add);
@@ -89,6 +91,7 @@ private:
     float m_YSpeed = 0.0f;
 
     bool m_ShouldFall = true;
+    bool m_DoGravity = true;
 
     static constexpr float GravityAcceleration = 9.81f;
     static constexpr float BASE_MOVE_DIST = 0.06f;

@@ -178,6 +178,7 @@ int main(int argc, char *argv[])
 {
     #ifdef GLA_DEBUG
         std::cout << "\n~In debug mode~\n";
+        std::cout << "C++" << __cplusplus << '\n';
     #endif
 
     /* Initialize the library */
@@ -243,6 +244,9 @@ int main(int argc, char *argv[])
     const Gla::Texture2D leaves_texture("assets/leaves.png", Gla::GLMinMagFilter::NEAREST);
     const Gla::Texture2D water_texture("assets/water.png", Gla::GLMinMagFilter::NEAREST);
 
+    Gla::FrameBuffer shadowmap_framebuffer(WINDOW_WIDTH * 6, WINDOW_HEIGHT * 6);
+    Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
+
     enum TextureBinding { NON_TRANSPARENT, TRANSPARENT };
     std::function<void(TextureBinding)> bind_textures = [&](TextureBinding binding)
     {
@@ -255,6 +259,7 @@ int main(int argc, char *argv[])
             GLCall( glBindTextureUnit(3, log_texture.GetID())       );
             GLCall( glBindTextureUnit(4, stone_texture.GetID())     );
             GLCall( glBindTextureUnit(5, sand_texture.GetID())      );
+            GLCall( glBindTextureUnit(6, shadowmap_framebuffer.GetTextureID())      );
             break;
         case TRANSPARENT:
             GLCall( glBindTextureUnit(0, leaves_texture.GetID()) );
@@ -335,17 +340,22 @@ int main(int argc, char *argv[])
     world_va.AddBuffer(world_vb, *layout);
     delete layout;
     Gla::Shader world_shader("shader/VertShader.vert", "shader/FragShader.frag");
-    // Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
+    Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
 
     Gla::Mesh world_mesh(world_va, world_shader);
-    // Gla::Mesh shadow_mesh(world_va, shadow_shader);
+    Gla::Mesh shadow_mesh(world_va, shadow_shader);
 
     world_shader.Bind();
-    int sampler_data[] = { 0, 1, 2, 3, 4, 5 };
-    world_shader.SetUniform1iv("u_Samplers", 6, sampler_data);
-    glm::mat4 sun_view_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(player.y_angle), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(player.xz_angle), y_axis)
+    int sampler_data[] = { 0, 1, 2, 3, 4, 5, 6 };
+    world_shader.SetUniform1iv("u_Samplers", 7, sampler_data);
+
+    glm::mat4 sun_view_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(280.0f), y_axis)
     * glm::translate(glm::mat4(1.0f), glm::vec3(-PLAYER_DEFAULT_X, -PLAYER_DEFAULT_Y, -PLAYER_DEFAULT_Z));  // For now sun is at player's beginning coords
-    world_shader.SetUniformMat4f("u_SunMvp", PROJECTION_MTR * sun_view_matrix);
+    shadow_shader.Bind();
+    shadow_shader.SetUniformMat4f("u_SunMvp", PROJECTION_MTR * sun_view_matrix);
+    world_shader.Bind();
+    world_shader.SetUniformMat4f("u_SunMvp_", PROJECTION_MTR * sun_view_matrix);
+    // world_shader.SetUniform1i("u_ShadowMap", 0);
 
     Gla::UniformBuffer ubo(0, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
     // Gla::UniformBuffer ubo_sun(1, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
@@ -355,6 +365,7 @@ int main(int argc, char *argv[])
     player.SetUniformBuffer(ubo);
 
     Gla::Timer out_of_loop_timer;
+    player.GravityOff();
 
     /* Game loop */
     while (!glfwWindowShouldClose(window))
@@ -365,13 +376,6 @@ int main(int argc, char *argv[])
 
         // terrain_vertices.clear();
         // transparent_texture_vertices.clear();
-
-        GLCall( glDisable(GL_DEPTH_TEST) );  // Disables depth test because it shouldn't apply to the sky
-
-        sky_mesh.Bind();
-        renderer.DrawArrays(GL_TRIANGLES, 6);
-
-        GLCall( glEnable(GL_DEPTH_TEST) );
 
         unsigned int size_nontransparent = 0;
         unsigned int size_transparent = 0;
@@ -402,10 +406,14 @@ int main(int argc, char *argv[])
         //     throw std::logic_error("Trying to dereference null from main()");
         // }
 
-        //* draws nontransparent
+        //* renders sky
 
-        bind_textures(NON_TRANSPARENT);
-        world_mesh.Bind();
+        GLCall( glDisable(GL_DEPTH_TEST) );  // Disables depth test because it shouldn't apply to the sky
+
+        sky_mesh.Bind();
+        renderer.DrawArrays(GL_TRIANGLES, 6);
+
+        GLCall( glEnable(GL_DEPTH_TEST) );
 
         world_vb.UpdateSizeIfShould(size_nontransparent * sizeof(float));
 
@@ -419,6 +427,19 @@ int main(int argc, char *argv[])
                 offset += Chunk::chunks[i][j]->GetNonTransparentVec().size() * sizeof(float);
             }
         }
+
+        //* rendering shadowmap
+
+        shadowmap_framebuffer.Bind();
+        GLCall( glClear(GL_DEPTH_BUFFER_BIT) );
+        shadow_mesh.Bind();
+        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
+
+        //* draws nontransparent
+
+        Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
+        bind_textures(NON_TRANSPARENT);
+        world_mesh.Bind();
 
         renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
 

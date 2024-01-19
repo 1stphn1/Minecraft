@@ -25,11 +25,34 @@
 
 layout(location = 0) out vec4 color;
 
-uniform sampler2D u_Samplers[6];
+uniform sampler2D u_Samplers[7];
+uniform sampler2D u_ShadowMap;
 
 in vec2 v_TexCoord;
+in vec4 v_LightSpacePos;
 flat in float v_Face;
 // flat in float v_LightIntensity;
+
+float calc_shadow_factor()
+{
+    vec3 proj_coords = v_LightSpacePos.xyz / v_LightSpacePos.w;
+    vec2 uv_coords;
+    uv_coords.x = 0.5 * proj_coords.x + 0.5;
+    uv_coords.y = 0.5 * proj_coords.y + 0.5;
+    float z = 0.5 * proj_coords.z + 0.5;
+    float depth = texture(u_Samplers[6], uv_coords).x;
+
+    float bias = 0.000003f;
+
+    if (z < depth - bias)
+    {
+        return 0.6f;
+    }
+    else
+    {
+        return 1.0f;
+    }
+}
 
 void main()
 {
@@ -176,8 +199,9 @@ void main()
     }
 
     // light_intensity = v_LightIntensity;
+    float shadow_factor = calc_shadow_factor();
 
-    color.r *= light_intensity;
-    color.g *= light_intensity;
-    color.b *= light_intensity;
+    color.r *= shadow_factor;
+    color.g *= shadow_factor;
+    color.b *= shadow_factor;
 }

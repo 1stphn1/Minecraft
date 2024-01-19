@@ -12,6 +12,7 @@
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/VertexBufferLayout.cpp",
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/UniformBuffer.cpp",
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/IndexBuffer.cpp",
+                "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/FrameBuffer.cpp",
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/VertexArray.cpp",
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/Shader.cpp",
                 "C:/Stefan/Programi/opengl_projects/Minecraft/src/Gla/Renderer.cpp",

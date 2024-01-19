@@ -3,6 +3,11 @@
 
 void Player::GravityAcc()
 {
+    if (!m_DoGravity)
+    {
+        return;
+    }
+    
     if (m_ShouldFall)
     {
         m_YSpeed -= GravityAcceleration * Gla::Timer::DeltaTime() * 0.5f;

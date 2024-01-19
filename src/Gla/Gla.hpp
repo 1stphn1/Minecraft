@@ -5,6 +5,7 @@
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "UniformBuffer.hpp"
+#include "FrameBuffer.hpp"
 #include "VertexBufferLayout.hpp"
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
