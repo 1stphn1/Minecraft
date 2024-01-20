@@ -17,7 +17,7 @@
 
 using namespace std::chrono_literals;
 
-constexpr float FPS_UPDATE_TIME = 0.7f;
+constexpr float WINDOW_TITLE_UPDATE_TIME = 0.7f;
 
 GLenum draw_mode = GL_TRIANGLES;
 
@@ -27,102 +27,10 @@ struct Point {
     float z;
 };
 
-void KeyboardInput(GLFWwindow* window)
+void HandleEvents(GLFWwindow* window)
 {
-    constexpr float FULL_ANGLE = 360.0f;
-
     glfwPollEvents();
-    
-    if (glfwGetKey(window, GLFW_KEY_W))
-    {
-        player.UpdateX(-glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        player.UpdateZ(-glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        // player.x_pos -= glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-        // player.z_pos -= glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    } else if (glfwGetKey(window, GLFW_KEY_S))
-    {
-        // player.UpdateX(glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
-        player.x_pos += glm::sin(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-        player.z_pos += glm::cos(glm::radians(-player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_D))
-    {
-        player.x_pos += glm::cos(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-        player.z_pos += glm::sin(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    }
-    else if (glfwGetKey(window, GLFW_KEY_A))
-    {
-        player.x_pos -= glm::cos(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-        player.z_pos -= glm::sin(glm::radians(player.xz_angle)) * player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    }
-    
-    if (glfwGetKey(window, GLFW_KEY_SPACE))
-    {
-        static Gla::Timer time_after_pushing;
-
-        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
-        {
-            player.Jump();
-            time_after_pushing.Reset();
-        }
-
-        // player.y_pos += player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    }
-    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
-    {
-        player.y_pos -= player.GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT))
-    {
-        player.xz_angle -= player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
-
-        if (player.xz_angle < 0.0f)
-        {
-            player.xz_angle = 360.0f + player.xz_angle;
-        }
-    }
-    else if (glfwGetKey(window, GLFW_KEY_RIGHT))
-    {
-        player.xz_angle += player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
-
-        if (player.xz_angle > 360.0f)
-        {
-            player.xz_angle = player.xz_angle - 360.0f;
-        }
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_DOWN))
-    {
-        player.y_angle -= player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
-    }
-    else if (glfwGetKey(window, GLFW_KEY_UP))
-    {
-        player.y_angle += player.GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
-    {
-        static Gla::Timer time_after_pushing;
-
-        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
-        {
-            player.ChangeSpeed();
-            time_after_pushing.Reset();
-        }
-    }
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) || glfwGetKey(window, GLFW_KEY_ENTER))
-    {
-        static Gla::Timer time_after_pushing;
-
-        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
-        {
-            Chunk::chunks[player.ChunkX()][player.ChunkZ()]->BreakBlock(player);
-            time_after_pushing.Reset();
-        }
-    }
+    player.HandleEvents(window);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_ALT))
     {
@@ -143,30 +51,6 @@ void KeyboardInput(GLFWwindow* window)
     {
         glfwSetWindowShouldClose(window, true);
     }
-}
-
-// For glfwCursorPosCallback()
-static void cursorPosCallback(GLFWwindow* window, double x_pos, double y_pos)
-{
-    static double old_x_pos = WINDOW_WIDTH / 2;
-    static double old_y_pos = WINDOW_HEIGHT / 2;
-    
-    player.xz_angle += (x_pos - old_x_pos) * 0.7;
-    player.y_angle  += (y_pos - old_y_pos) * 0.7;
-
-    if (player.xz_angle < 0.0f)
-    {
-        player.xz_angle = 360.0f + player.xz_angle;
-    }
-    else if (player.xz_angle > 360.0f)
-    {
-        player.xz_angle = player.xz_angle - 360.0f;
-    }
-    
-    /*reverse until this does not delete*/
-
-    old_x_pos = x_pos;
-    old_y_pos = y_pos;
 }
 
 static void glfwError(int id, const char* description)
@@ -216,7 +100,7 @@ int main(int argc, char *argv[])
         std::cout << "GLFW raw mouse motion not suppported\n";
     }
 
-    glfwSetCursorPosCallback(window, cursorPosCallback);
+    glfwSetCursorPosCallback(window, Player::CursorPosCallback);
 
     if (glewInit() != GLEW_OK)
     {
@@ -231,7 +115,7 @@ int main(int argc, char *argv[])
     GLCall( glEnable(GL_BLEND) );
     GLCall( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
-    {  // without this block, vb and ib go out of scope after glfwTerminate, so glDeleteBuffers in destructors of IndexBuffer and VertexBuffer doesn't work
+    {  // Without this block, OpenGL vars would go out of scope after calling glfwTerminate, which would freeze the program
     // glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, -8.0f, 8.0f) * glm::perspective<float>(glm::radians(10.0f), 1280.0f / 960.0f, 0.1f, 1.0f);
     // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(player.x_pos, player.y_pos, player.z_pos));
 
@@ -259,11 +143,11 @@ int main(int argc, char *argv[])
             GLCall( glBindTextureUnit(3, log_texture.GetID())       );
             GLCall( glBindTextureUnit(4, stone_texture.GetID())     );
             GLCall( glBindTextureUnit(5, sand_texture.GetID())      );
-            GLCall( glBindTextureUnit(6, shadowmap_framebuffer.GetTextureID())      );
+            GLCall( glBindTextureUnit(6, shadowmap_framebuffer.GetTextureID()) );
             break;
         case TRANSPARENT:
             GLCall( glBindTextureUnit(0, leaves_texture.GetID()) );
-            GLCall( glBindTextureUnit(1, water_texture.GetID()) );
+            GLCall( glBindTextureUnit(1, water_texture.GetID())  );
             break;
         default:
             LOG("Wrong 'TextureBinding' value in bind_textures lambda. From line: " << __LINE__);
@@ -343,7 +227,8 @@ int main(int argc, char *argv[])
     Gla::Shader shadow_shader("shader/ShadowVertShader.vert", "shader/ShadowFragShader.frag");
 
     Gla::Mesh world_mesh(world_va, world_shader);
-    Gla::Mesh shadow_mesh(world_va, shadow_shader);
+    Gla::Mesh shadow_mesh_nontransparent(world_va, shadow_shader);
+    Gla::Mesh shadow_mesh_transparent(transparent_va, shadow_shader);
 
     world_shader.Bind();
     int sampler_data[] = { 0, 1, 2, 3, 4, 5, 6 };
@@ -371,8 +256,6 @@ int main(int argc, char *argv[])
     while (!glfwWindowShouldClose(window))
     {
         Gla::Timer loop_timer;
-
-        renderer.Clear();
 
         // terrain_vertices.clear();
         // transparent_texture_vertices.clear();
@@ -406,15 +289,7 @@ int main(int argc, char *argv[])
         //     throw std::logic_error("Trying to dereference null from main()");
         // }
 
-        //* renders sky
-
-        GLCall( glDisable(GL_DEPTH_TEST) );  // Disables depth test because it shouldn't apply to the sky
-
-        sky_mesh.Bind();
-        renderer.DrawArrays(GL_TRIANGLES, 6);
-
-        GLCall( glEnable(GL_DEPTH_TEST) );
-
+        //* World vb update
         world_vb.UpdateSizeIfShould(size_nontransparent * sizeof(float));
 
         unsigned int offset = 0;
@@ -428,36 +303,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        //* rendering shadowmap
-
-        shadowmap_framebuffer.Bind();
-        GLCall( glClear(GL_DEPTH_BUFFER_BIT) );
-        shadow_mesh.Bind();
-        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
-
-        //* draws nontransparent
-
-        Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
-        bind_textures(NON_TRANSPARENT);
-        world_mesh.Bind();
-
-        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
-
-        //*
-
-
-        // bind_textures(NON_TRANSPARENT);
-        // world_mesh.Bind();
-
-        // world_vb.UpdateSizeIfShould(terrain_vertices.size() * sizeof(float));
-        // world_vb.UpdateData(terrain_vertices.data(), terrain_vertices.size() * sizeof(float));
-        // renderer.DrawArrays(draw_mode, terrain_vertices.size() / ELEMENTS_PER_VERTEX);
-
-        //* draws transparent
-
-        bind_textures(TRANSPARENT);
-        transparent_mesh.Bind();
-
+        //* Transparent vb update
         transparent_vb.UpdateSizeIfShould(size_transparent * sizeof(float));
 
         offset = 0;
@@ -465,39 +311,63 @@ int main(int argc, char *argv[])
         for (int i = player.ChunkX() - VIEW_DISTANCE; i < player.ChunkX() + VIEW_DISTANCE; i++)
         { // for each chunk
             for (int j = player.ChunkZ() - VIEW_DISTANCE; j < player.ChunkZ() + VIEW_DISTANCE; j++)
-            {
+            {   // The buffer is bound in UpdateData func
                 transparent_vb.UpdateData(Chunk::chunks[i][j]->GetTransparentVec().data(), Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float), offset);
                 offset += Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float);
             }
         }
 
+        renderer.Clear();
+
+        //* renders sky
+
+        GLCall( glDisable(GL_DEPTH_TEST) );  // Disables depth test because it shouldn't apply to the sky
+
+        sky_mesh.Bind();
+        renderer.DrawArrays(GL_TRIANGLES, 6);
+
+        GLCall( glEnable(GL_DEPTH_TEST) );
+
+        //* rendering shadowmap
+
+        shadowmap_framebuffer.Bind();
+        GLCall( glClear(GL_DEPTH_BUFFER_BIT) );
+
+        shadow_mesh_nontransparent.Bind();
+        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
+        shadow_mesh_transparent.Bind();
         renderer.DrawArrays(draw_mode, size_transparent / ELEMENTS_PER_VERTEX);
 
-        //*
+        Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        // bind_textures(TRANSPARENT);
-        // transparent_mesh.Bind();
+        //* draws nontransparent
 
-        // transparent_vb.UpdateSizeIfShould(transparent_texture_vertices.size() * sizeof(float));
-        // transparent_vb.UpdateData(transparent_texture_vertices.data(), transparent_texture_vertices.size() * sizeof(float));
-        // renderer.DrawArrays(draw_mode, transparent_texture_vertices.size() / ELEMENTS_PER_VERTEX);
+        bind_textures(NON_TRANSPARENT);
+        world_mesh.Bind();
+        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
 
-        // Chunk::FreeUnneededVertexData();
+        //* draws transparent
+
+        bind_textures(TRANSPARENT);
+        transparent_mesh.Bind();
+        renderer.DrawArrays(draw_mode, size_transparent / ELEMENTS_PER_VERTEX);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         renderer.Flush();
 
-        KeyboardInput(window);
+        HandleEvents(window);
         player.GravityAcc();
         player.UpdateView();
 
-        if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time) {  // Frame limit 60 fps
+        if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time)  // FPS limit to 60
+        {
             std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
         }
         
-        if (out_of_loop_timer.GetTime() >= FPS_UPDATE_TIME) {
+        if (out_of_loop_timer.GetTime() >= WINDOW_TITLE_UPDATE_TIME)
+        {
             // C++ std::string code
 
             std::string new_title = "Minecraft - "

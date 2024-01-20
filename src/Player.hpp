@@ -21,11 +21,6 @@ public:
           m_UniformBuffer(nullptr),
           m_ViewMtr(glm::translate(glm::mat4(1.0f), glm::vec3(x_pos, y_pos, z_pos))) {}
 
-    constexpr void SetUniformBuffer(Gla::UniformBuffer& u_buffer)
-    {
-        m_UniformBuffer = &u_buffer;
-    }
-
     inline void UpdateView()
     {
         m_ViewMtr = glm::rotate(glm::mat4(1.0f), glm::radians(y_angle), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(xz_angle), y_axis)
@@ -46,8 +41,9 @@ public:
         }
     }
 
-    constexpr void GravityOff() { m_DoGravity = false; }
-    constexpr void GravityOn()  { m_DoGravity = true;  }
+    void HandleEvents(GLFWwindow* window);
+    static void CursorPosCallback(GLFWwindow* window, double cursor_x, double cursor_y);
+
     void GravityAcc();
     void Jump();
     void UpdateX(float value_to_add);
@@ -60,6 +56,9 @@ public:
 
     float xz_angle;
     float y_angle;
+
+    constexpr void GravityOff() { m_DoGravity = false; }
+    constexpr void GravityOn()  { m_DoGravity = true;  }
 
     // These are the coordinates of the chunk where the player is located
     constexpr int ChunkX() const { return (int)x_pos / CHUNK_LENGHT; }
@@ -82,6 +81,8 @@ public:
     constexpr float GetMoveAngle() const { return BASE_MOVE_ANGLE; }
 
     constexpr glm::mat4 GetViewMtr() const { return m_ViewMtr; }
+
+    constexpr void SetUniformBuffer(Gla::UniformBuffer& u_buffer) { m_UniformBuffer = &u_buffer; }
 
 private:
     glm::mat4 m_ViewMtr;

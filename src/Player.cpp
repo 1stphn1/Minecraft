@@ -1,5 +1,130 @@
 #include "Player.hpp"
 #include "Chunk.hpp"
+#include "Gla/Timer.hpp"
+
+void Player::HandleEvents(GLFWwindow* window)
+{
+    constexpr float FULL_ANGLE = 360.0f;
+
+    if (glfwGetKey(window, GLFW_KEY_W))
+    {
+        UpdateX(-glm::sin(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        UpdateZ(-glm::cos(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        // x_pos -= glm::sin(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        // z_pos -= glm::cos(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    } else if (glfwGetKey(window, GLFW_KEY_S))
+    {
+        // UpdateX(glm::sin(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized());
+        x_pos += glm::sin(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        z_pos += glm::cos(glm::radians(-xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D))
+    {
+        x_pos += glm::cos(glm::radians(xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        z_pos += glm::sin(glm::radians(xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    }
+    else if (glfwGetKey(window, GLFW_KEY_A))
+    {
+        x_pos -= glm::cos(glm::radians(xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        z_pos -= glm::sin(glm::radians(xz_angle)) * GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    }
+    
+    if (glfwGetKey(window, GLFW_KEY_SPACE))
+    {
+        static Gla::Timer time_after_pushing;
+
+        if (!m_DoGravity)
+        {
+            y_pos += GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+        }
+
+        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
+        {
+            Jump();
+            time_after_pushing.Reset();
+        }
+
+        // y_pos += GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    }
+    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+    {
+        y_pos -= GetMoveDist() * Gla::Timer::DeltaTimeNormalized();
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT))
+    {
+        xz_angle -= GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
+
+        if (xz_angle < 0.0f)
+        {
+            xz_angle = 360.0f + xz_angle;
+        }
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT))
+    {
+        xz_angle += GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
+
+        if (xz_angle > 360.0f)
+        {
+            xz_angle = xz_angle - 360.0f;
+        }
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN))
+    {
+        y_angle -= GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
+    }
+    else if (glfwGetKey(window, GLFW_KEY_UP))
+    {
+        y_angle += GetMoveAngle() * Gla::Timer::DeltaTimeNormalized();
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
+    {
+        static Gla::Timer time_after_pushing;
+
+        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
+        {
+            ChangeSpeed();
+            time_after_pushing.Reset();
+        }
+    }
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) || glfwGetKey(window, GLFW_KEY_ENTER))
+    {
+        static Gla::Timer time_after_pushing;
+
+        if (time_after_pushing.GetTime() > 0.2f /*seconds*/)
+        {
+            Chunk::chunks[ChunkX()][ChunkZ()]->BreakBlock(player);
+            time_after_pushing.Reset();
+        }
+    }
+}
+
+void Player::CursorPosCallback(GLFWwindow* window, double cursor_x, double cursor_y)
+{
+    static double old_cursor_x = WINDOW_WIDTH / 2;
+    static double old_cursor_y = WINDOW_HEIGHT / 2;
+    
+    player.xz_angle += (cursor_x - old_cursor_x) * 0.7;
+    player.y_angle  += (cursor_y - old_cursor_y) * 0.7;
+
+    if (player.xz_angle < 0.0f)
+    {
+        player.xz_angle = 360.0f + player.xz_angle;
+    }
+    else if (player.xz_angle > 360.0f)
+    {
+        player.xz_angle = player.xz_angle - 360.0f;
+    }
+    
+    /*reverse until this does not delete*/
+
+    old_cursor_x = cursor_x;
+    old_cursor_y = cursor_y;
+}
 
 void Player::GravityAcc()
 {
@@ -54,7 +179,8 @@ void Player::GravityAcc()
 
 void Player::Jump()
 {
-    if (m_ShouldFall) {
+    if (m_ShouldFall)
+    {
         return;
     }
 
