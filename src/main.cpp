@@ -234,14 +234,6 @@ int main(int argc, char *argv[])
     int sampler_data[] = { 0, 1, 2, 3, 4, 5, 6 };
     world_shader.SetUniform1iv("u_Samplers", 7, sampler_data);
 
-    glm::mat4 sun_view_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(280.0f), y_axis)
-    * glm::translate(glm::mat4(1.0f), glm::vec3(-PLAYER_DEFAULT_X, -PLAYER_DEFAULT_Y, -PLAYER_DEFAULT_Z));  // For now sun is at player's beginning coords
-    shadow_shader.Bind();
-    shadow_shader.SetUniformMat4f("u_SunMvp", PROJECTION_MTR * sun_view_matrix);
-    world_shader.Bind();
-    world_shader.SetUniformMat4f("u_SunMvp_", PROJECTION_MTR * sun_view_matrix);
-    // world_shader.SetUniform1i("u_ShadowMap", 0);
-
     Gla::UniformBuffer ubo(0, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
     // Gla::UniformBuffer ubo_sun(1, &PROJECTION_MTR[0][0]);  // This is used in the 'Player' class to update the view projection matrix
     ubo.Bind();
@@ -288,6 +280,16 @@ int main(int argc, char *argv[])
         // if (Chunk::chunks[player.ChunkX()][player.ChunkZ()] == nullptr) {
         //     throw std::logic_error("Trying to dereference null from main()");
         // }
+
+        float directional_light_height = 70.0f;
+        glm::mat4 directional_light_view_mtr = glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), y_axis)
+        * glm::translate(glm::mat4(1.0f), glm::vec3(-player.GetX(), -directional_light_height, -player.GetZ()));  // For now sun is at player's beginning coords
+        float planes_lenght = VIEW_DISTANCE * CHUNK_LENGHT * 2.0f;
+        glm::mat4 directional_light_proj_mtr = glm::ortho(-planes_lenght, planes_lenght, -planes_lenght, planes_lenght, -planes_lenght, planes_lenght);
+        shadow_shader.Bind();
+        shadow_shader.SetUniformMat4f("u_SunMvp", directional_light_proj_mtr * directional_light_view_mtr);
+        world_shader.Bind();
+        world_shader.SetUniformMat4f("u_SunMvp_", directional_light_proj_mtr * directional_light_view_mtr);
 
         //* World vb update
         world_vb.UpdateSizeIfShould(size_nontransparent * sizeof(float));

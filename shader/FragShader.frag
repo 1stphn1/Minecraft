@@ -30,7 +30,7 @@ uniform sampler2D u_ShadowMap;
 
 in vec2 v_TexCoord;
 in vec4 v_LightSpacePos;
-flat in float v_Face;
+flat in float v_BlockData;
 // flat in float v_LightIntensity;
 
 float calc_shadow_factor()
@@ -42,7 +42,7 @@ float calc_shadow_factor()
     float z = 0.5 * proj_coords.z + 0.5;
     float depth = texture(u_Samplers[6], uv_coords).x;
 
-    float bias = 0.000004f;
+    float bias = 0.0004f;
 
     if (z < depth - bias)
     {
@@ -62,12 +62,12 @@ void main()
         discard;
     }
 
-    int block = int(v_Face) - (int(v_Face) % 10);
+    int block = int(v_BlockData) - (int(v_BlockData) % 10);
 
     switch (block)
     {
         case GRASS_BLOCK:
-            switch (int(v_Face) % 10)
+            switch (int(v_BlockData) % 10)
             {
                 case FRONT_FACE:
                     color = texture(u_Samplers[GRASSND_TEXTURE], v_TexCoord);
@@ -109,7 +109,40 @@ void main()
 
     float shadow_factor = calc_shadow_factor();
 
-    color.r *= shadow_factor;
-    color.g *= shadow_factor;
-    color.b *= shadow_factor;
+    if (shadow_factor != 1.0f)  // If there is shadow
+    {
+        color.r *= shadow_factor;
+        color.g *= shadow_factor;
+        color.b *= shadow_factor;
+    }
+    else
+    {
+        float light_intensity;
+
+        switch (int(v_BlockData) % 10)
+        {
+            case FRONT_FACE:
+                light_intensity = 0.9f;
+                break;
+            case BACK_FACE:
+                light_intensity = 0.7f;
+                break;
+            case LEFT_FACE:
+                light_intensity = 0.8f;
+                break;
+            case RIGHT_FACE:
+                light_intensity = 0.8f;
+                break;
+            case TOP_FACE:
+                light_intensity = 1.0f;
+                break;
+            case BOTTOM_FACE:
+                light_intensity = 0.7f;
+                break;
+        }
+
+        color.r *= light_intensity;
+        color.g *= light_intensity;
+        color.b *= light_intensity;
+    }
 }

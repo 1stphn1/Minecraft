@@ -11,7 +11,7 @@ layout(binding = 0) uniform u_ViewProjectionMatrix
 
 out vec2 v_TexCoord;
 out vec4 v_LightSpacePos;
-flat out float v_Face;
+flat out float v_BlockData;
 // flat out float v_LightIntensity;
 
 uniform mat4 u_SunMvp_;
@@ -23,16 +23,6 @@ void main()
     gl_Position = u_Mvp * position;
     
     v_TexCoord = a_TexCoord;
-    v_Face = a_Face;
+    v_BlockData = a_Face;
     v_LightSpacePos = u_SunMvp_ * position;
-
-    // vec4 pos = u_SunMvp * vec4(a_Position, 1.0f);
-
-    // if (pos.z > 0.0 && pos.x > -pos.w && pos.x < pos.w && pos.y > -pos.w && pos.y < pos.w) {
-    //     // The sun can see the vertex
-    //     v_LightIntensity = 1.0f;
-    // } else {
-    //     // The sun cannot see the vertex
-    //     v_LightIntensity = 0.6f;
-    // }
 }
