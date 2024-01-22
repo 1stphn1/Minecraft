@@ -102,7 +102,7 @@ public:
 
     constexpr std::vector<float>& GetNonTransparentVec() { return nontransparent_vertices; }
     constexpr std::vector<float>& GetTransparentVec()    { return transparent_vertices; }
-    constexpr bool ShouldBeEmplaced() const { return emplaced; }    
+    constexpr bool ShouldBeEmplaced() const { return !emplaced; }    
 
     void EmplaceVertices();
     void FreeVertexData();

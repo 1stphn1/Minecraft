@@ -1,5 +1,4 @@
 #include "Shader.hpp"
-#include <unordered_map>
 
 namespace Gla
 {
@@ -89,8 +88,6 @@ namespace Gla
 
     int Shader::GetUniformLocation(const std::string& name)
     {
-        static std::unordered_map<std::string, int> m_UniformLocationCache; 
-
         if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())  // if found
             return m_UniformLocationCache[name];
 

@@ -27,6 +27,10 @@ struct Point {
     float z;
 };
 
+struct ChunkCoords {
+    int x, z;
+};
+
 void HandleEvents(GLFWwindow* window)
 {
     glfwPollEvents();
@@ -128,7 +132,10 @@ int main(int argc, char *argv[])
     const Gla::Texture2D leaves_texture("assets/leaves.png", Gla::GLMinMagFilter::NEAREST);
     const Gla::Texture2D water_texture("assets/water.png", Gla::GLMinMagFilter::NEAREST);
 
-    Gla::FrameBuffer shadowmap_framebuffer(WINDOW_WIDTH * 6, WINDOW_HEIGHT * 6);
+    GLint dims[2];
+    glGetIntegerv(GL_MAX_VIEWPORT_DIMS, &dims[0]);
+
+    Gla::FrameBuffer shadowmap_framebuffer(dims[0], dims[1]);
     Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     enum TextureBinding { NON_TRANSPARENT, TRANSPARENT };
@@ -242,12 +249,15 @@ int main(int argc, char *argv[])
     player.SetUniformBuffer(ubo);
 
     Gla::Timer out_of_loop_timer;
-    player.GravityOff();
+    // player.GravityOff();
+
+    ChunkCoords last_frame_chunkcoords = { player.ChunkX(), player.ChunkZ() };
 
     /* Game loop */
     while (!glfwWindowShouldClose(window))
     {
         Gla::Timer loop_timer;
+        bool should_update_buffers = false;
 
         // terrain_vertices.clear();
         // transparent_texture_vertices.clear();
@@ -268,6 +278,16 @@ int main(int argc, char *argv[])
                             Chunk::chunks[k][l] = new Chunk(k, l);
                         }
                     }
+                }
+
+                if (player.ChunkX() != last_frame_chunkcoords.x || player.ChunkZ() != last_frame_chunkcoords.z)
+                {
+                    should_update_buffers = true;
+                }
+
+                if (Chunk::chunks[i][j]->ShouldBeEmplaced())
+                {
+                    should_update_buffers = true;
                 }
                 
                 Chunk::chunks[i][j]->EmplaceVertices();
@@ -291,37 +311,49 @@ int main(int argc, char *argv[])
         world_shader.Bind();
         world_shader.SetUniformMat4f("u_SunMvp_", directional_light_proj_mtr * directional_light_view_mtr);
 
-        //* World vb update
-        world_vb.UpdateSizeIfShould(size_nontransparent * sizeof(float));
+        Gla::Timer update_timer;
+        float update_time;
 
-        unsigned int offset = 0;
+        if (should_update_buffers)
+        {
+            //* World vb update
+            world_vb.UpdateSizeIfShould(size_nontransparent * sizeof(float));
 
-        for (int i = player.ChunkX() - VIEW_DISTANCE; i < player.ChunkX() + VIEW_DISTANCE; i++)
-        { // for each chunk
-            for (int j = player.ChunkZ() - VIEW_DISTANCE; j < player.ChunkZ() + VIEW_DISTANCE; j++)
-            {
-                world_vb.UpdateData(Chunk::chunks[i][j]->GetNonTransparentVec().data(), Chunk::chunks[i][j]->GetNonTransparentVec().size() * sizeof(float), offset);
-                offset += Chunk::chunks[i][j]->GetNonTransparentVec().size() * sizeof(float);
+            unsigned int offset = 0;
+
+            for (int i = player.ChunkX() - VIEW_DISTANCE; i < player.ChunkX() + VIEW_DISTANCE; i++)
+            { // for each chunk
+                for (int j = player.ChunkZ() - VIEW_DISTANCE; j < player.ChunkZ() + VIEW_DISTANCE; j++)
+                {
+                    world_vb.UpdateData(Chunk::chunks[i][j]->GetNonTransparentVec().data(), Chunk::chunks[i][j]->GetNonTransparentVec().size() * sizeof(float), offset);
+                    offset += Chunk::chunks[i][j]->GetNonTransparentVec().size() * sizeof(float);
+                }
+            }
+
+            //* Transparent vb update
+            transparent_vb.UpdateSizeIfShould(size_transparent * sizeof(float));
+
+            offset = 0;
+
+            for (int i = player.ChunkX() - VIEW_DISTANCE; i < player.ChunkX() + VIEW_DISTANCE; i++)
+            { // for each chunk
+                for (int j = player.ChunkZ() - VIEW_DISTANCE; j < player.ChunkZ() + VIEW_DISTANCE; j++)
+                {   // The buffer is bound in UpdateData func
+                    transparent_vb.UpdateData(Chunk::chunks[i][j]->GetTransparentVec().data(), Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float), offset);
+                    offset += Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float);
+                }
             }
         }
 
-        //* Transparent vb update
-        transparent_vb.UpdateSizeIfShould(size_transparent * sizeof(float));
+        update_time = update_timer.GetTime();
 
-        offset = 0;
 
-        for (int i = player.ChunkX() - VIEW_DISTANCE; i < player.ChunkX() + VIEW_DISTANCE; i++)
-        { // for each chunk
-            for (int j = player.ChunkZ() - VIEW_DISTANCE; j < player.ChunkZ() + VIEW_DISTANCE; j++)
-            {   // The buffer is bound in UpdateData func
-                transparent_vb.UpdateData(Chunk::chunks[i][j]->GetTransparentVec().data(), Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float), offset);
-                offset += Chunk::chunks[i][j]->GetTransparentVec().size() * sizeof(float);
-            }
-        }
-
-        renderer.Clear();
+        Gla::Timer render_timer;
+        float render_time;
 
         //* renders sky
+
+        renderer.Clear();
 
         GLCall( glDisable(GL_DEPTH_TEST) );  // Disables depth test because it shouldn't apply to the sky
 
@@ -354,6 +386,8 @@ int main(int argc, char *argv[])
         transparent_mesh.Bind();
         renderer.DrawArrays(draw_mode, size_transparent / ELEMENTS_PER_VERTEX);
 
+        render_time = render_timer.GetTime();
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -362,11 +396,13 @@ int main(int argc, char *argv[])
         HandleEvents(window);
         player.GravityAcc();
         player.UpdateView();
+        last_frame_chunkcoords.x = player.ChunkX();
+        last_frame_chunkcoords.z = player.ChunkZ();
 
-        if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time)  // FPS limit to 60
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
-        }
+        // if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time)  // FPS limit to 60
+        // {
+        //     std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
+        // }
         
         if (out_of_loop_timer.GetTime() >= WINDOW_TITLE_UPDATE_TIME)
         {
@@ -374,7 +410,9 @@ int main(int argc, char *argv[])
 
             std::string new_title = "Minecraft - "
             + std::to_string(1 / Gla::Timer::DeltaTime()/*time from last frame*/) + " FPS \\ " + std::to_string(Gla::Timer::DeltaTime()) + " ms \\ "
-            + " --- X/Y/Z: " + std::to_string(player.x_pos) + " / " + std::to_string(player.y_pos) + " / " + std::to_string(player.z_pos);
+            + " --- X/Y/Z: " + std::to_string(player.x_pos) + " / " + std::to_string(player.y_pos) + " / " + std::to_string(player.z_pos) + " \\ "
+            + "Update time %" + std::to_string((update_time / loop_timer.GetTime()) * 100.0f) + " - "
+            + "Render time %" + std::to_string((render_time / loop_timer.GetTime()) * 100.0f);
 
             #ifdef GLA_DEBUG
                 new_title += " ~Debug Mode~";
@@ -401,6 +439,11 @@ int main(int argc, char *argv[])
 
             out_of_loop_timer.Reset();*/
         }
+
+        // if (loop_timer.GetTime() < Gla::Timer::FPS60_frame_time)  // FPS limit to 60
+        // {
+        //     std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
+        // }
 
         Gla::Timer::CalculateDeltaTime(loop_timer.GetTime());
     }

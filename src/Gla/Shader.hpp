@@ -5,6 +5,8 @@
 
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <unordered_map>
 
 #include "../glm/gtc/matrix_transform.hpp"
 
@@ -49,7 +51,8 @@ namespace Gla
         unsigned int CompileShader(unsigned int type, const std::string& source);
         int GetUniformLocation(const std::string& name);
 
-        std::string m_FilePath;
         unsigned int m_RendererID;
+        std::string m_FilePath;
+        std::unordered_map<std::string, int> m_UniformLocationCache;
     };
 }
