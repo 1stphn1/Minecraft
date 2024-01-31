@@ -50,13 +50,6 @@ public:
     void UpdateZ(float value_to_add);
     void Update();  // Runs every frame
 
-    float x_pos;
-    float y_pos;
-    float z_pos;
-
-    float xz_angle;
-    float y_angle;
-
     constexpr void GravityOff() { m_DoGravity = false; }
     constexpr void GravityOn()  { m_DoGravity = true;  }
 
@@ -87,6 +80,13 @@ public:
 private:
     glm::mat4 m_ViewMtr;
     Gla::UniformBuffer* m_UniformBuffer;
+
+    float x_pos;
+    float y_pos;
+    float z_pos;
+
+    float xz_angle;
+    float y_angle;
 
     float move_dist;
     float m_YSpeed = 0.0f;

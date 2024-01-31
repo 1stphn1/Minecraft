@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
             GLCall( glBindTextureUnit(1, water_texture.GetID())  );
             break;
         default:
-            LOG("Wrong 'TextureBinding' value in bind_textures lambda. From line: " << __LINE__);
+            LOG("Wrong 'TextureBinding' value in bind_textures lambda. Line " << __LINE__);
         }
     };
 
@@ -253,6 +253,10 @@ int main(int argc, char *argv[])
 
     ChunkCoords last_frame_chunkcoords = { player.ChunkX(), player.ChunkZ() };
 
+    constexpr int SHADOW_VIEW_DISTANCE = 4;
+    float planes_lenght = SHADOW_VIEW_DISTANCE * CHUNK_LENGHT * 2.0f;
+    glm::mat4 directional_light_proj_mtr = glm::ortho(-planes_lenght, planes_lenght, -planes_lenght, planes_lenght, -planes_lenght, planes_lenght);
+
     /* Game loop */
     while (!glfwWindowShouldClose(window))
     {
@@ -281,14 +285,10 @@ int main(int argc, char *argv[])
                 }
 
                 if (player.ChunkX() != last_frame_chunkcoords.x || player.ChunkZ() != last_frame_chunkcoords.z)
-                {
                     should_update_buffers = true;
-                }
 
                 if (Chunk::chunks[i][j]->ShouldBeEmplaced())
-                {
                     should_update_buffers = true;
-                }
                 
                 Chunk::chunks[i][j]->EmplaceVertices();
 
@@ -301,15 +301,16 @@ int main(int argc, char *argv[])
         //     throw std::logic_error("Trying to dereference null from main()");
         // }
 
-        float directional_light_height = 70.0f;
-        glm::mat4 directional_light_view_mtr = glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), y_axis)
-        * glm::translate(glm::mat4(1.0f), glm::vec3(-player.GetX(), -directional_light_height, -player.GetZ()));  // For now sun is at player's beginning coords
-        float planes_lenght = VIEW_DISTANCE * CHUNK_LENGHT * 2.0f;
-        glm::mat4 directional_light_proj_mtr = glm::ortho(-planes_lenght, planes_lenght, -planes_lenght, planes_lenght, -planes_lenght, planes_lenght);
-        shadow_shader.Bind();
-        shadow_shader.SetUniformMat4f("u_SunMvp", directional_light_proj_mtr * directional_light_view_mtr);
-        world_shader.Bind();
-        world_shader.SetUniformMat4f("u_SunMvp_", directional_light_proj_mtr * directional_light_view_mtr);
+        if (should_update_buffers)
+        {
+            float directional_light_height = 70.0f;
+            glm::mat4 directional_light_view_mtr = glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), x_axis) * glm::rotate(glm::mat4(1.0f), glm::radians(300.0f), y_axis)
+            * glm::translate(glm::mat4(1.0f), glm::vec3(-player.GetX(), -directional_light_height, -player.GetZ()));  // For now sun is at player's beginning coords
+            shadow_shader.Bind();
+            shadow_shader.SetUniformMat4f("u_SunMvp", directional_light_proj_mtr * directional_light_view_mtr);
+            world_shader.Bind();
+            world_shader.SetUniformMat4f("u_SunMvp_", directional_light_proj_mtr * directional_light_view_mtr);
+        }
 
         Gla::Timer update_timer;
         float update_time;
@@ -364,15 +365,18 @@ int main(int argc, char *argv[])
 
         //* rendering shadowmap
 
-        shadowmap_framebuffer.Bind();
-        GLCall( glClear(GL_DEPTH_BUFFER_BIT) );
+        if (should_update_buffers)  // No need to render the shadow map if nothing in the world changed, since shadows stay the same
+        {   
+            shadowmap_framebuffer.Bind();
+            GLCall( glClear(GL_DEPTH_BUFFER_BIT) );
 
-        shadow_mesh_nontransparent.Bind();
-        renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
-        shadow_mesh_transparent.Bind();
-        renderer.DrawArrays(draw_mode, size_transparent / ELEMENTS_PER_VERTEX);
+            shadow_mesh_nontransparent.Bind();
+            renderer.DrawArrays(draw_mode, size_nontransparent / ELEMENTS_PER_VERTEX);
+            shadow_mesh_transparent.Bind();
+            renderer.DrawArrays(draw_mode, size_transparent / ELEMENTS_PER_VERTEX);
 
-        Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
+            Gla::FrameBuffer::BindToDefaultFB(WINDOW_WIDTH, WINDOW_HEIGHT);
+        }
 
         //* draws nontransparent
 
@@ -403,6 +407,13 @@ int main(int argc, char *argv[])
         // {
         //     std::this_thread::sleep_for(std::chrono::milliseconds( (int)((Gla::Timer::FPS60_frame_time - loop_timer.GetTime()) * 1000.0f) ));
         // }
+
+        if (should_update_buffers)
+        {
+            LOG("Update time: " << (update_time / loop_timer.GetTime()) * 100.0f);
+            LOG("Render time: " << (render_time / loop_timer.GetTime()) * 100.0f);
+            LOG("FPS:         " << (1 / loop_timer.GetTime()));
+        }
         
         if (out_of_loop_timer.GetTime() >= WINDOW_TITLE_UPDATE_TIME)
         {
@@ -410,7 +421,7 @@ int main(int argc, char *argv[])
 
             std::string new_title = "Minecraft - "
             + std::to_string(1 / Gla::Timer::DeltaTime()/*time from last frame*/) + " FPS \\ " + std::to_string(Gla::Timer::DeltaTime()) + " ms \\ "
-            + " --- X/Y/Z: " + std::to_string(player.x_pos) + " / " + std::to_string(player.y_pos) + " / " + std::to_string(player.z_pos) + " \\ "
+            + " --- X/Y/Z: " + std::to_string(player.GetX()) + " / " + std::to_string(player.GetY()) + " / " + std::to_string(player.GetZ()) + " \\ "
             + "Update time %" + std::to_string((update_time / loop_timer.GetTime()) * 100.0f) + " - "
             + "Render time %" + std::to_string((render_time / loop_timer.GetTime()) * 100.0f);
 

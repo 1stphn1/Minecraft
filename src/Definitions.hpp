@@ -38,7 +38,7 @@ constexpr int CHUNK_HEIGHT = 128;
 constexpr int CHUNKS_ACROSS_X_AXIS = 1000;
 constexpr int CHUNKS_ACROSS_Z_AXIS = 1000;
 
-constexpr int VIEW_DISTANCE  = 3;  // View distance in chunks
+constexpr int VIEW_DISTANCE  = 6;  // View distance in chunks
 constexpr int VISIBLE_CHUNKS = VIEW_DISTANCE * 2 * VIEW_DISTANCE * 2;
 
 constexpr float FOV_Y = 10.0f;

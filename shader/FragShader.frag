@@ -42,7 +42,7 @@ float calc_shadow_factor()
     float z = 0.5 * proj_coords.z + 0.5;
     float depth = texture(u_Samplers[6], uv_coords).x;
 
-    float bias = 0.0004f;
+    float bias = 0.00025f;
 
     if (z < depth - bias)
     {
